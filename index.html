@@ -95,6 +95,12 @@ figcaption { display: grid; gap: 3px; font-size: 0.92rem; }
 figcaption b { font-weight: 600; }
 figcaption span { color: var(--dim); font-size: 0.85rem; }
 
+/* prints: two landscape on top, two portrait below, each row keeps its own shape */
+.prints { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; margin-top: 36px; align-items: end; }
+@media (max-width: 620px) { .prints { grid-template-columns: minmax(0, 1fr); } }
+.prints figure:nth-child(n+3) img { max-height: 520px; width: auto; justify-self: center; }
+.sizes { font: 500 0.78rem/1.4 var(--font-data) !important; letter-spacing: 0.06em; color: var(--ha) !important; }
+
 /* how it works: a real sequence */
 .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 36px; counter-reset: step; }
 @media (max-width: 820px) { .steps { grid-template-columns: minmax(0, 1fr); } }
@@ -132,7 +138,7 @@ html { scroll-behavior: smooth; }
   <header class="top">
     <div class="brand">Gosforth <span>Skies</span></div>
     <nav class="nav" aria-label="Sections">
-      <a href="#gallery">Gallery</a><a href="#how">How it works</a><a href="#prices">Prices</a><a href="#faq">Questions</a>
+      <a href="#gallery">Gallery</a><a href="#prints">Prints</a><a href="#how">How it works</a><a href="#prices">Prices</a><a href="#faq">Questions</a>
     </nav>
   </header>
 
@@ -251,6 +257,33 @@ html { scroll-behavior: smooth; }
         <figcaption><b>Andromeda, M31</b><span>634 frames over three nights plus 2.8 h of Hα, Seestar S30 Pro</span></figcaption>
       </figure>
     </div>
+  </div>
+</section>
+
+<section id="prints">
+  <div class="wrap">
+    <p class="eyebrow">Prints</p>
+    <h2>Pictures for the <em>wall</em></h2>
+    <p class="lede" style="margin-top:14px">My own images, captured from Tyneside, Northumberland and Cumbria on a Seestar S30 Pro. Printed on fine-art paper. Tell me which ones you'd hang, and at what size: it helps decide what to offer.</p>
+    <div class="prints">
+      <figure>
+        <img src="img/m31_after.jpg" alt="The Andromeda Galaxy" width="1600" height="940" loading="lazy">
+        <figcaption><b>Andromeda, M31</b><span>8.6 h over three nights · landscape</span><span class="sizes">A4 · A3</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/heart_soul_mosaic.jpg" alt="The Heart and Soul nebulae" width="1600" height="900" loading="lazy">
+        <figcaption><b>Heart and Soul</b><span>9.5 h mosaic · landscape</span><span class="sizes">A4 · A3 · A2</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/m45_after.jpg" alt="The Pleiades" width="1600" height="1956" loading="lazy">
+        <figcaption><b>The Pleiades, M45</b><span>58 min over two nights · portrait</span><span class="sizes">A4 · A3</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/m33_after.jpg" alt="The Triangulum Galaxy" width="1600" height="2133" loading="lazy">
+        <figcaption><b>Triangulum, M33</b><span>3.1 h · portrait</span><span class="sizes">A4 · A3</span></figcaption>
+      </figure>
+    </div>
+    <p class="note">Prices to follow. For now, reply to the message that brought you here with the picture and size you'd like.</p>
   </div>
 </section>
 
