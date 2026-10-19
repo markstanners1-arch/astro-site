@@ -7,6 +7,10 @@ compatibility_date = "2026-10-01"
 workers_dev = false
 routes = [ { pattern = "upload.oneoffx.uk", custom_domain = true } ]
 
+# daily outbox clean-up (scheduled() in src/index.js), 06:00 UTC
+[triggers]
+crons = [ "0 6 * * *" ]
+
 [[r2_buckets]]
 binding = "BUCKET"
 bucket_name = "gosforth-uploads"

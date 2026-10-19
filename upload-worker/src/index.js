@@ -10,6 +10,18 @@
 // code can be given to one person and withdrawn on its own without a redeploy. Admin calls need Authorization: Bearer ADMIN_KEY:
 //   GET /admin/sets   GET /admin/file?key=   DELETE /admin/set?set=   GET|PUT /admin/codes
 // Total storage is held under QUOTA so the bucket stays inside R2's free 10 GB.
+//
+// OUTBOX (finished pictures going back to a client), driven by tools in D:\NINA\deliver.py:
+//   POST /admin/outbox/job {client, email, title, set}  -> {job, link}     creates _outbox/<job>/_job.json
+//   POST /admin/outbox/start?job=&name=                 -> {uploadId}      multipart upload, so a 300 MB TIFF fits
+//   PUT  /admin/outbox/part?job=&name=&uploadId=&n=     body = one part    -> {partNumber, etag}
+//   POST /admin/outbox/done?job=&name=&uploadId=        {parts}            -> {ok}
+//   GET  /admin/outbox                                  every job and its state
+//   DELETE /admin/outbox/job?job=                       clear a job's files now
+//   GET  /d/<job>  and  /d/<job>/<file>                 the client's download page and files (the job id is the secret)
+// The first download is recorded and emailed to Mark. A daily run (scheduled below) clears a job's files 7 days after
+// its first download, nudges Mark at 7 days if nothing has been downloaded, and clears anything 30 days old.
+// Cloudflare only sends mail to verified addresses, so mail to clients goes out from Mark's Gmail, never from here.
 import { EmailMessage } from 'cloudflare:email';
 
 const QUOTA = 9e9;
@@ -45,6 +57,44 @@ async function codes(env) {
 async function meta(env, set) {
   const m = await env.BUCKET.get(`${set}/_meta.json`);
   return m ? m.json() : null;
+}
+
+const DAY = 864e5, KEEP_AFTER_DOWNLOAD = 7 * DAY, NUDGE_AFTER = 7 * DAY, CLEAR_AFTER = 30 * DAY;
+async function tellMark(env, subject, lines) {
+  const raw = [`From: Gosforth Skies <${env.MAIL_FROM}>`, `To: ${env.MAIL_TO}`, `Subject: ${subject}`,
+    `Message-ID: <${crypto.randomUUID()}@oneoffx.uk>`, `Date: ${new Date().toUTCString()}`, `MIME-Version: 1.0`,
+    `Content-Type: text/plain; charset=utf-8`, ``, ...lines].join('\r\n');
+  try { await env.MAILER.send(new EmailMessage(env.MAIL_FROM, env.MAIL_TO, raw)); } catch (e) { console.log('email failed', e); }
+}
+async function job(env, id) {
+  const j = await env.BUCKET.get(`_outbox/${id}/_job.json`);
+  return j ? j.json() : null;
+}
+const putJob = (env, j) => env.BUCKET.put(`_outbox/${j.job}/_job.json`, JSON.stringify(j), { httpMetadata: { contentType: 'application/json' } });
+async function jobFiles(env, id) {
+  return (await listAll(env.BUCKET, `_outbox/${id}/`)).filter((o) => !o.key.endsWith('/_job.json'))
+    .map((o) => ({ name: o.key.split('/').pop(), size: o.size }));
+}
+async function clearJob(env, j, why) {
+  const keys = (await listAll(env.BUCKET, `_outbox/${j.job}/`)).map((o) => o.key).filter((k) => !k.endsWith('/_job.json'));
+  if (keys.length) await env.BUCKET.delete(keys);
+  j.cleared = new Date().toISOString(); j.cleared_why = why;
+  await putJob(env, j);
+}
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function downloadPage(j, files) {
+  const mb = (n) => (n / 1e6).toFixed(n > 1e8 ? 0 : 1) + ' MB';
+  const rows = files.map((f) => `<li><a href="/d/${j.job}/${encodeURIComponent(f.name)}">${esc(f.name)}</a><span>${mb(f.size)}</span></li>`).join('');
+  const body = j.cleared
+    ? `<p>These files have been cleared. If you still need them, reply to Mark's email and he'll send them again.</p>`
+    : `<ul>${rows}</ul><p class="n">The TIFF is the full-size file for printing; the JPEG is for sharing. The link stays open for 7 days after your first download.</p>`;
+  return `<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>${esc(j.title)} · Gosforth Skies</title><style>
+body{margin:0;background:#0b1019;color:#e6e9ef;font:16px/1.6 system-ui,sans-serif}main{max-width:640px;margin:0 auto;padding:40px 16px}
+h1{font:400 1.9rem/1.2 Georgia,serif;margin:0 0 6px}.e{font:500 .75rem ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:#e0664d}
+ul{list-style:none;padding:0;margin:24px 0;display:grid;gap:10px}li{display:flex;justify-content:space-between;gap:12px;background:#121a27;border:1px solid #243046;border-radius:8px;padding:14px 16px}
+a{color:#e6e9ef;font-weight:600;text-decoration-color:#e0664d;overflow-wrap:anywhere}span,.n{color:#95a0b4;font-size:.9rem}</style></head>
+<body><main><p class="e">Gosforth Skies</p><h1>${esc(j.title)}</h1><p>Processed for ${esc(j.client)} by Mark Stanners.</p>${body}</main></body></html>`;
 }
 
 async function notify(env, m, count, bytes) {
@@ -88,6 +138,39 @@ export default {
         for (let i = 0; i < keys.length; i += 1000) await env.BUCKET.delete(keys.slice(i, i + 1000));
         return json(req, { deleted: keys.length });
       }
+      if (p === '/admin/outbox' && req.method === 'GET') {
+        const ids = [...new Set((await listAll(env.BUCKET, '_outbox/')).map((o) => o.key.split('/')[1]))];
+        const out = [];
+        for (const id of ids) { const j = await job(env, id); if (j) out.push({ ...j, files: await jobFiles(env, id) }); }
+        return json(req, out);
+      }
+      if (p === '/admin/outbox/job' && req.method === 'POST') {
+        const b = await req.json().catch(() => null);
+        if (!b || !b.client || !b.title) return json(req, { error: 'need client and title' }, 400);
+        const slug = (b.client + '-' + b.title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+        const rnd = [...crypto.getRandomValues(new Uint8Array(10))].map((x) => x.toString(16).padStart(2, '0')).join('');
+        const j = { job: `${slug}-${rnd}`, client: clean(b.client), email: clean(b.email, 120), title: clean(b.title, 120), set: clean(b.set, 120),
+          created: new Date().toISOString(), first_download: null, nudged: false, cleared: null };
+        await putJob(env, j);
+        return json(req, { job: j.job, link: `${url.origin}/d/${j.job}` });
+      }
+      if (p === '/admin/outbox/job' && req.method === 'DELETE') {          // clear a job by hand (keeps its record)
+        const j = await job(env, q.get('job') || '');
+        if (!j) return json(req, { error: 'unknown job' }, 404);
+        await clearJob(env, j, 'cleared by hand');
+        return json(req, { ok: true });
+      }
+      if (p.startsWith('/admin/outbox/')) {
+        const id = q.get('job') || '', name = safeName(q.get('name'));
+        const j = await job(env, id);
+        if (!j || !name) return json(req, { error: 'unknown job or name' }, 400);
+        const key = `_outbox/${id}/${name}`;
+        if (p === '/admin/outbox/start' && req.method === 'POST') return json(req, { uploadId: (await env.BUCKET.createMultipartUpload(key)).uploadId });
+        const mpu = env.BUCKET.resumeMultipartUpload(key, q.get('uploadId') || '');
+        if (p === '/admin/outbox/part' && req.method === 'PUT') return json(req, await mpu.uploadPart(Number(q.get('n')), req.body));
+        if (p === '/admin/outbox/done' && req.method === 'POST') { await mpu.complete((await req.json()).parts); return json(req, { ok: true }); }
+        return json(req, { error: 'unknown' }, 404);
+      }
       if (p === '/admin/codes' && req.method === 'GET') return json(req, await codes(env));
       if (p === '/admin/codes' && req.method === 'PUT') {
         const c = await req.json().catch(() => null);
@@ -97,6 +180,24 @@ export default {
         return json(req, clean_);
       }
       return json(req, { error: 'unknown' }, 404);
+    }
+
+    if (p.startsWith('/d/') && req.method === 'GET') {
+      const [, , id, file] = p.split('/');
+      const j = /^[\w-]+$/.test(id || '') ? await job(env, id) : null;
+      if (!j) return new Response('This link is not valid. Please check it against the email from Mark.', { status: 404 });
+      if (!file) return new Response(downloadPage(j, j.cleared ? [] : await jobFiles(env, id)), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      const name = safeName(decodeURIComponent(file));
+      const o = j.cleared ? null : await env.BUCKET.get(`_outbox/${id}/${name}`);
+      if (!o) return new Response('That file has gone. Reply to Mark and he will send it again.', { status: 404 });
+      if (!j.first_download) {
+        j.first_download = new Date().toISOString();
+        await putJob(env, j);
+        await tellMark(env, `${j.client} downloaded ${j.title}`, [`${j.client} first downloaded ${name} at ${j.first_download}.`, ``,
+          `The files and their raw frames will be cleared in 7 days (${new Date(Date.now() + KEEP_AFTER_DOWNLOAD).toDateString()}).`]);
+      }
+      return new Response(o.body, { headers: { 'Content-Type': o.httpMetadata?.contentType || 'application/octet-stream',
+        'Content-Length': o.size, 'Content-Disposition': `attachment; filename="${name}"` } });
     }
 
     if (p === '/request' && req.method === 'POST') {
@@ -157,5 +258,29 @@ export default {
       return json(req, { ok: true, files: objs.length });
     }
     return json(req, { error: 'unknown' }, 404);
+  },
+
+  // daily (see [triggers] in wrangler.toml): the outbox clean-up rules described at the top
+  async scheduled(event, env) {
+    const now = Date.now();
+    const ids = [...new Set((await listAll(env.BUCKET, '_outbox/')).map((o) => o.key.split('/')[1]))];
+    for (const id of ids) {
+      const j = await job(env, id);
+      if (!j || j.cleared) continue;
+      const age = now - Date.parse(j.created);
+      if (j.first_download && now - Date.parse(j.first_download) > KEEP_AFTER_DOWNLOAD) {
+        await clearJob(env, j, '7 days after first download');
+        await tellMark(env, `Cleared: ${j.title} for ${j.client}`, [`Downloaded ${j.first_download}; the outbox files are now cleared.`,
+          `The desktop clean-up removes the raw frames for ${j.set || 'this job'} on its next run.`]);
+      } else if (!j.first_download && age > CLEAR_AFTER) {
+        await clearJob(env, j, '30 days, never downloaded');
+        await tellMark(env, `Cleared unopened: ${j.title} for ${j.client}`, [`Nobody downloaded this in 30 days, so the outbox files are cleared.`,
+          `Raw frames for ${j.set || 'this job'} go on the next desktop clean-up; the finished files stay in Clients\\.`]);
+      } else if (!j.first_download && age > NUDGE_AFTER && !j.nudged) {
+        j.nudged = true; await putJob(env, j);
+        await tellMark(env, `Not downloaded yet: ${j.title} for ${j.client}`, [`${j.client} <${j.email}> hasn't opened their link after 7 days.`,
+          `Link: https://upload.oneoffx.uk/d/${j.job}`, ``, `It clears itself at 30 days (${new Date(Date.parse(j.created) + CLEAR_AFTER).toDateString()}). A nudge from you might help.`]);
+      }
+    }
   },
 };
