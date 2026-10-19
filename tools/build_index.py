@@ -2,6 +2,8 @@
 # GitHub Pages: adds the document skeleton, charset/viewport and the small reset the preview viewer supplies.
 # Run after every edit to site.html:  python tools/build_index.py
 from pathlib import Path
+import build_prints                              # regenerate the PRINTS section from data/print_sizes.csv first
+build_prints.build()
 root = Path(__file__).resolve().parent.parent
 body = (root / 'site.html').read_text(encoding='utf8')
 head = '''<!doctype html>
