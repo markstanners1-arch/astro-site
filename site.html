@@ -100,6 +100,21 @@ figcaption span { color: var(--dim); font-size: 0.85rem; }
 .step { display: grid; gap: 10px; align-content: start; min-width: 0; }
 .step::before { counter-increment: step; content: counter(step); font: 400 2.6rem/1 var(--font-display); color: var(--ha); }
 .step p { color: var(--dim); }
+/* send your frames: the upload box (talks to the gosforth-upload Worker at upload.oneoffx.uk) */
+.send { margin-top: 40px; background: var(--deep); border: 1px solid var(--ha); border-radius: 8px; padding: clamp(18px, 3vw, 28px); display: grid; gap: 16px; max-width: 760px; }
+.send .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+@media (max-width: 560px) { .send .fields { grid-template-columns: minmax(0, 1fr); } }
+.send label { display: grid; gap: 4px; font-size: 0.85rem; color: var(--dim); min-width: 0; }
+.send input[type=text], .send input[type=email] { font: inherit; color: var(--ink); background: var(--sky); border: 1px solid var(--rule); border-radius: 6px; padding: 9px 11px; min-width: 0; }
+.drop { border: 1px dashed var(--rule); border-radius: 8px; padding: 22px 16px; text-align: center; color: var(--dim); cursor: pointer; display: grid; gap: 6px; }
+.drop.over { border-color: var(--oiii); color: var(--ink); }
+.drop b { color: var(--ink); font-weight: 600; }
+.send button { justify-self: start; padding: 12px 22px; border: 0; border-radius: 999px; background: var(--ha); color: #fff; font: 600 0.95rem var(--font-body); cursor: pointer; }
+.send button:disabled { opacity: 0.5; cursor: default; }
+.bar { height: 8px; border-radius: 4px; background: var(--sky); border: 1px solid var(--rule); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--oiii); transition: width 0.3s; }
+.sendmsg { font: 400 0.85rem/1.5 var(--font-data); color: var(--dim); }
+.sendmsg.err { color: var(--ha); }
 code { font: 400 0.88em var(--font-data); background: var(--deep); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
 
 /* pricing */
@@ -316,6 +331,14 @@ html { scroll-behavior: smooth; }
         <figcaption><b>Ring Nebula, M57</b><span>12 h 50 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes">A4 £25</span></figcaption>
       </figure>
       <figure class="print">
+        <img src="img/tl_ic1848_wide.jpg" alt="Heart and Soul, wide field (IC 1805 and IC 1848)" loading="lazy">
+        <figcaption><b>Heart and Soul, wide field (IC 1805 and IC 1848)</b><span>21 h 50 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes">A4 £25 · A3 £45 · A2 £80</span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_ic1848_heart_soul.jpg" alt="Heart and Soul, Telescope Live" loading="lazy">
+        <figcaption><b>Heart and Soul, Telescope Live</b><span>21 h 50 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes">A4 £25</span><span class="onreq">A3 on request</span></figcaption>
+      </figure>
+      <figure class="print">
         <img src="img/m31_tl_seestar.jpg" alt="Andromeda, deep (Seestar + Telescope Live)" loading="lazy">
         <figcaption><b>Andromeda, deep (Seestar + Telescope Live)</b><span class="credit">Seestar data by Mark Stanners, combined with Telescope Live data</span><span class="sizes">A4 £30 · A3 £50 · A2 £90</span></figcaption>
       </figure>
@@ -324,8 +347,8 @@ html { scroll-behavior: smooth; }
     <div class="media">
       <h3>Acrylic and metal</h3>
       <p>Most images can also be made as a face-mounted acrylic or an aluminium-mounted print: deep blacks, ready to hang, no frame needed. Priced on request; as a guide, from about £120 at A3 and £220 at A2.</p>
-      <p class="note">At A3: Heart and Soul; Andromeda, M31; The Pleiades, M45; Triangulum, M33; Elephant&#x27;s Trunk, IC 1396; Garlic Nebula; California Nebula, NGC 1499; Horsehead, B33; Fighting Dragons of Ara, NGC 6188; Running Chicken, IC 2944; Dumbbell Nebula, M27; Butterfly Cluster, M7; Eagle Nebula, M16; Andromeda, deep (Seestar + Telescope Live).</p>
-      <p class="note">At A2: Heart and Soul; Garlic Nebula; Horsehead, B33; Fighting Dragons of Ara, NGC 6188; Running Chicken, IC 2944; Dumbbell Nebula, M27; Butterfly Cluster, M7; Andromeda, deep (Seestar + Telescope Live).</p>
+      <p class="note">At A3: Heart and Soul; Andromeda, M31; The Pleiades, M45; Triangulum, M33; Elephant&#x27;s Trunk, IC 1396; Garlic Nebula; California Nebula, NGC 1499; Horsehead, B33; Fighting Dragons of Ara, NGC 6188; Running Chicken, IC 2944; Dumbbell Nebula, M27; Butterfly Cluster, M7; Eagle Nebula, M16; Heart and Soul, wide field (IC 1805 and IC 1848); Andromeda, deep (Seestar + Telescope Live).</p>
+      <p class="note">At A2: Heart and Soul; Garlic Nebula; Horsehead, B33; Fighting Dragons of Ara, NGC 6188; Running Chicken, IC 2944; Dumbbell Nebula, M27; Butterfly Cluster, M7; Heart and Soul, wide field (IC 1805 and IC 1848); Andromeda, deep (Seestar + Telescope Live).</p>
     </div>
     <p class="note">To order, email me with the picture, size and finish.</p>
   </div>
@@ -338,7 +361,7 @@ html { scroll-behavior: smooth; }
     <div class="steps">
       <div class="step">
         <h3>Send the frames</h3>
-        <p>Share the folder of individual frames, not the app's finished picture. On a Seestar that's the <code>…_sub</code> folder, full of <code>Light_*.fit</code> files. A Google Drive or WeTransfer link is fine.</p>
+        <p>Pick the folder of individual frames in the box below and it does the rest. On a Seestar that's the <code>…_sub</code> folder, full of <code>Light_*.fit</code> files; you can pick the whole folder and only the frames are sent.</p>
       </div>
       <div class="step">
         <h3>I process them</h3>
@@ -349,8 +372,108 @@ html { scroll-behavior: smooth; }
         <p>A full-size 16-bit TIFF for printing, a JPEG for sharing, and a short note on what the data showed and what would improve it next time.</p>
       </div>
     </div>
+
+    <form class="send" id="send" novalidate>
+      <h3 id="upload">Send your frames</h3>
+      <div class="fields">
+        <label>Invite code<input type="text" name="code" autocomplete="off" required></label>
+        <label>Your name<input type="text" name="name" autocomplete="name" required></label>
+        <label>Email<input type="email" name="email" autocomplete="email" required></label>
+        <label>Target<input type="text" name="target" placeholder="e.g. M31, Andromeda" required></label>
+        <label>Scope<input type="text" name="scope" placeholder="e.g. Seestar S50"></label>
+        <label>Where you took it<input type="text" name="location" placeholder="e.g. Kielder"></label>
+      </div>
+      <label class="drop" id="drop">
+        <b>Choose the folder of frames</b>
+        <span>or drag it here. Only the <code>.fit</code> frames are sent.</span>
+        <input type="file" id="folder" webkitdirectory multiple hidden>
+      </label>
+      <p class="sendmsg" id="picked">No folder chosen yet.</p>
+      <button type="submit" id="go" disabled>Send</button>
+      <div class="bar" hidden><i></i></div>
+      <p class="sendmsg" id="status" aria-live="polite"></p>
+    </form>
   </div>
 </section>
+<script>
+// Upload box: filters the chosen folder down to the light frames, sends them four at a time to the upload Worker,
+// retries failures, and skips files already sent if the same person sends the same target again the same day.
+(() => {
+  const API = 'https://upload.oneoffx.uk', MAX = 95e6, form = document.getElementById('send');
+  const drop = document.getElementById('drop'), pick = document.getElementById('folder'), go = document.getElementById('go');
+  const picked = document.getElementById('picked'), status = document.getElementById('status');
+  const bar = form.querySelector('.bar'), fill = bar.firstElementChild;
+  let files = [];
+  const gb = (n) => (n / 1e9).toFixed(2) + ' GB';
+  const say = (t, err) => { status.textContent = t; status.classList.toggle('err', !!err); };
+  function choose(list) {
+    const fits = list.filter((f) => /\.(fit|fits|fts|xisf)$/i.test(f.name));
+    const lights = fits.filter((f) => /^light/i.test(f.name));
+    files = lights.length ? lights : fits;                  // a Seestar folder: only the Light_ frames, not the stacked result
+    const big = files.filter((f) => f.size > MAX);
+    files = files.filter((f) => f.size <= MAX);
+    const total = files.reduce((t, f) => t + f.size, 0);
+    picked.textContent = files.length ? `${files.length} frames, ${gb(total)}` + (big.length ? ` (${big.length} too big, skipped)` : '')
+                                      : 'No .fit frames found in that folder.';
+    go.disabled = !files.length;
+  }
+  pick.addEventListener('change', () => choose([...pick.files]));
+  async function walk(entry, out) {
+    if (entry.isFile) out.push(await new Promise((ok, no) => entry.file(ok, no)));
+    else if (entry.isDirectory) {
+      const reader = entry.createReader();
+      for (let batch; (batch = await new Promise((ok, no) => reader.readEntries(ok, no))).length; )
+        for (const e of batch) await walk(e, out);
+    }
+  }
+  ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, () => drop.classList.remove('over')));
+  drop.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    const out = [];
+    for (const it of [...e.dataTransfer.items]) { const en = it.webkitGetAsEntry && it.webkitGetAsEntry(); if (en) await walk(en, out); }
+    choose(out);
+  });
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(form));
+    if (!d.code || !d.name || !d.email || !d.target) return say('Please fill in the invite code, your name, email and target.', true);
+    const H = { 'X-Invite': d.code.trim() };
+    go.disabled = true; bar.hidden = false; fill.style.width = '0';
+    try {
+      const call = async (path, opts = {}) => {
+        const r = await fetch(API + path, { ...opts, headers: { ...H, ...(opts.headers || {}) } });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(j.error || `Upload service error ${r.status}`);
+        return j;
+      };
+      say('Starting…');
+      const { set } = await call('/start', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...d, code: undefined, files: files.map((f) => ({ name: f.name, size: f.size })) }) });
+      const have = new Set((await call(`/have?set=${set}`)).names);
+      const todo = files.filter((f) => !have.has(f.name.replace(/[^\w .()+-]/g, '')));
+      const total = files.reduce((t, f) => t + f.size, 0);
+      let sent = total - todo.reduce((t, f) => t + f.size, 0), failed = 0, next = 0;
+      const show = () => { fill.style.width = (100 * sent / total).toFixed(1) + '%'; say(`Sending… ${gb(sent)} of ${gb(total)}`); };
+      show();
+      async function worker() {
+        while (next < todo.length) {
+          const f = todo[next++];
+          for (let tryNo = 1; ; tryNo++) {
+            try { await call(`/put?set=${set}&name=${encodeURIComponent(f.name)}`, { method: 'PUT', body: f }); sent += f.size; show(); break; }
+            catch (err) { if (tryNo === 3) { failed++; break; } await new Promise((ok) => setTimeout(ok, 2000 * tryNo)); }
+          }
+        }
+      }
+      await Promise.all([worker(), worker(), worker(), worker()]);
+      if (failed) throw new Error(`${failed} frames didn't go. Press Send again and it will carry on where it stopped.`);
+      await call(`/finish?set=${set}`, { method: 'POST' });
+      fill.style.width = '100%';
+      say(`Done: ${files.length} frames received. Mark has been told and will be in touch.`);
+    } catch (err) { say(err.message, true); go.disabled = false; }
+  });
+})();
+</script>
 
 <section id="prices">
   <div class="wrap">

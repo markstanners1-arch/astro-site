@@ -1,0 +1,18 @@
+# Upload service for the site's "Send your frames" box. Deploy from this folder:  wrangler deploy
+# Secrets (set once, never in this file, since the repo is public):  INVITE_CODE, ADMIN_KEY, MAIL_TO  via  wrangler secret put <NAME>
+name = "gosforth-upload"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = false
+routes = [ { pattern = "upload.oneoffx.uk", custom_domain = true } ]
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "gosforth-uploads"
+
+# the arrival note goes to MAIL_TO, which must be a verified Email Routing destination
+[[send_email]]
+name = "MAILER"
+
+[vars]
+MAIL_FROM = "uploads@oneoffx.uk"
