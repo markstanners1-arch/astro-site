@@ -55,7 +55,7 @@ save(bef, 'heart_before.jpg'); save(aft, 'heart_after.jpg')
 save(load('D:/Brampton_Oct7-8_work/Draco_Heart_hybrid/Draco_Heart_HOO.jpg'), 'heart_hoo.jpg')
 
 # Heart and Soul mosaic (Seestar), shown on its own
-print('Mosaic'); save(load('D:/IC1805_work/IC1805_F4.jpg'), 'heart_soul_mosaic.jpg', rot=True)
+print('Mosaic'); save(load('D:/IC1805_work/IC1805_F5_lifted.jpg'), 'heart_soul_mosaic.jpg', rot=True)
 
 # Telescope Live data processed by Mark (credit "Data: Telescope Live" on the site)
 print('Telescope Live')
