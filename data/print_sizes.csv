@@ -1,18 +1,18 @@
-image,source,status,pixels,A4 dpi,A3 dpi,A2 dpi,A1 dpi,sizes at 180 dpi or better,title,web_image,note,tier,integration,nights
-Heart and Soul mosaic,"own, Seestar",finished,6144x3456,525,372,263,186,A4 · A3 · A2 · A1,Heart and Soul,heart_soul_mosaic.jpg,,flagship,9.5 h,
-Andromeda M31,"own, Seestar",finished,3839x2159,328,232,164,116,A4 · A3,"Andromeda, M31",m31_after.jpg,"8.6 hours of light, three nights, nearly 100 miles of driving to dark skies.",flagship,8.6 h,3
-Pleiades M45,"own, Seestar",finished,3760x2080,322,227,161,114,A4 · A3,"The Pleiades, M45",m45_after.jpg,,standard,58 min,2
-Triangulum M33,"own, Seestar",finished,3711x2029,317,224,159,112,A4 · A3,"Triangulum, M33",m33_after.jpg,,standard,3.1 h,1
-Elephant's Trunk IC 1396,"own, Vespera",finished (flats to come),3715x2039,318,225,159,112,A4 · A3,"Elephant's Trunk, IC 1396",elephants_trunk.jpg,,standard,3 h,1
-Garlic Nebula HOO,"Telescope Live (T3, USA)",finished,9502x6279,813,575,406,287,A4 · A3 · A2 · A1,Garlic Nebula,garlic_nebula.jpg,,standard,,
-California NGC 1499,"own, Seestar","one panel, unfinished",3337x1751,285,202,143,101,A4 · A3,"California Nebula, NGC 1499",california_ngc1499.jpg,,standard,3.9 h,1
-Horsehead B33 (SHO),Telescope Live,quick merge only,9516x6322,814,575,407,287,A4 · A3 · A2 · A1,"Horsehead, B33",horsehead_b33.jpg,,standard,,
-Fighting Dragons NGC 6188 (SHO),Telescope Live,finished,4440x3540,428,303,214,151,A4 · A3 · A2,"Fighting Dragons of Ara, NGC 6188",tl_ngc6188.jpg,,standard,,
-Running Chicken IC 2944 (SHO),Telescope Live,finished,4440x3540,428,303,214,151,A4 · A3 · A2,"Running Chicken, IC 2944",tl_ic2944.jpg,,standard,,
-Dumbbell M27 (SHO),Telescope Live,finished,4728x3131,404,286,202,143,A4 · A3 · A2,"Dumbbell Nebula, M27",tl_m27.jpg,,standard,,
-Butterfly Cluster M7 (RGB),Telescope Live,quick render (full processing to follow),4728x3131,404,286,202,143,A4 · A3 · A2,"Butterfly Cluster, M7",tl_m7.jpg,,standard,,
-SH2-124 (LRGB),Telescope Live,quick render (full processing to follow),4728x3131,404,286,202,143,A4 · A3 · A2,Sh2-124,tl_sh2_124.jpg,,standard,,
-IC 4605 (RGB),Telescope Live,quick render (full processing to follow),4440x3540,428,303,214,151,A4 · A3 · A2,IC 4605,tl_ic4605.jpg,,standard,,
-Eagle M16 (LRGB + Ha),Telescope Live,quick render (full processing to follow),2900x2900,351,248,175,124,A4 · A3,"Eagle Nebula, M16",tl_m16.jpg,,standard,,
-Ring Nebula M57,Telescope Live,finished (binned data),2334x1535,200,141,100,70,A4,"Ring Nebula, M57",tl_m57.jpg,,standard,,
-"Andromeda M31, TL + Seestar",mixed,finished,3937x3939,476,337,238,168,A4 · A3 · A2,"Andromeda, deep (Seestar + Telescope Live)",m31_tl_seestar.jpg,,flagship,,
+image,source,status,pixels,A4 dpi,A3 dpi,A2 dpi,A1 dpi,sizes at 180 dpi or better,title,web_image,note,tier,integration,nights,show
+Heart and Soul mosaic,"own, Seestar",finished,6144x3456,525,372,263,186,A4 · A3 · A2 · A1,Heart and Soul,heart_soul_mosaic.jpg,,flagship,9.5 h,,yes
+Andromeda M31,"own, Seestar",finished,3839x2159,328,232,164,116,A4 · A3,"Andromeda, M31",m31_after.jpg,"8.6 hours of light, three nights, nearly 100 miles of driving to dark skies.",flagship,8.6 h,3,yes
+Pleiades M45,"own, Seestar",finished,3760x2080,322,227,161,114,A4 · A3,"The Pleiades, M45",m45_after.jpg,,standard,58 min,2,yes
+Triangulum M33,"own, Seestar",finished,3711x2029,317,224,159,112,A4 · A3,"Triangulum, M33",m33_after.jpg,,standard,3.1 h,1,yes
+Elephant's Trunk IC 1396,"own, Vespera",finished (flats to come),3715x2039,318,225,159,112,A4 · A3,"Elephant's Trunk, IC 1396",elephants_trunk.jpg,,standard,3 h,1,yes
+Garlic Nebula HOO,"Telescope Live (T3, USA)",finished,9502x6279,813,575,406,287,A4 · A3 · A2 · A1,Garlic Nebula,garlic_nebula.jpg,,standard,57 h 20 min,,yes
+California NGC 1499,"own, Seestar","one panel, unfinished",3337x1751,285,202,143,101,A4 · A3,"California Nebula, NGC 1499",california_ngc1499.jpg,,standard,3.9 h,1,yes
+Horsehead B33 (SHO),Telescope Live,quick merge only,9516x6322,814,575,407,287,A4 · A3 · A2 · A1,"Horsehead, B33",horsehead_b33.jpg,,standard,8 h 45 min,,yes
+Fighting Dragons NGC 6188 (SHO),Telescope Live,finished,4440x3540,428,303,214,151,A4 · A3 · A2,"Fighting Dragons of Ara, NGC 6188",tl_ngc6188.jpg,,standard,7 h 40 min,,yes
+Running Chicken IC 2944 (SHO),Telescope Live,finished,4440x3540,428,303,214,151,A4 · A3 · A2,"Running Chicken, IC 2944",tl_ic2944.jpg,,standard,6 h 30 min,,yes
+Dumbbell M27 (SHO),Telescope Live,finished,4728x3131,404,286,202,143,A4 · A3 · A2,"Dumbbell Nebula, M27",tl_m27.jpg,,standard,14 h 15 min,,yes
+Butterfly Cluster M7 (RGB),Telescope Live,quick render (full processing to follow),4728x3131,404,286,202,143,A4 · A3 · A2,"Butterfly Cluster, M7",tl_m7.jpg,,standard,12 h,,yes
+SH2-124 (LRGB),Telescope Live,quick render (full processing to follow),4728x3131,404,286,202,143,A4 · A3 · A2,Sh2-124,tl_sh2_124.jpg,,standard,,,no
+IC 4605 (RGB),Telescope Live,quick render (full processing to follow),4440x3540,428,303,214,151,A4 · A3 · A2,IC 4605,tl_ic4605.jpg,,standard,,,no
+Eagle M16 (LRGB + Ha),Telescope Live,quick render (full processing to follow),2900x2900,351,248,175,124,A4 · A3,"Eagle Nebula, M16",tl_m16.jpg,,standard,23 h 04 min,,yes
+Ring Nebula M57,Telescope Live,finished (binned data),2334x1535,200,141,100,70,A4,"Ring Nebula, M57",tl_m57.jpg,,standard,12 h 50 min,,yes
+"Andromeda M31, TL + Seestar",mixed,finished,3937x3939,476,337,238,168,A4 · A3 · A2,"Andromeda, deep (Seestar + Telescope Live)",m31_tl_seestar.jpg,,flagship,,,yes

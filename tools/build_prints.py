@@ -7,7 +7,7 @@
 #   tier "flagship" uses the flagship price list (no A1 price, so an offered A1 shows "on request").
 #   Credit comes from the source column: "own, <scope>", "Telescope Live ...", or "mixed".
 #   note replaces the integration/nights line when present.
-#   Rows with no web_image get a text-only card.
+#   Rows with no web_image get a text-only card. Rows with show = no are left out (blank or yes = shown).
 import csv, html, re
 from pathlib import Path
 
@@ -75,7 +75,8 @@ def section(rows):
             '    <p class="note">To order, email me with the picture, size and finish.</p>\n  </div>\n</section>')
 
 def build():
-    rows = list(csv.DictReader(open(ROOT / 'data' / 'print_sizes.csv', encoding='utf8')))
+    rows = [r for r in csv.DictReader(open(ROOT / 'data' / 'print_sizes.csv', encoding='utf8'))
+            if (r.get('show') or 'yes').strip().lower() != 'no']
     page = (ROOT / 'site.html').read_text(encoding='utf8')
     new, n = re.subn(r'<section id="prints">.*?</section>', lambda m: section(rows), page, count=1, flags=re.S)
     if n != 1: raise SystemExit('prints section not found in site.html')
