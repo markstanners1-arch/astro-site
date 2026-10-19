@@ -1,9 +1,7 @@
 <title>Gosforth Skies</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Astrophotography processing for Seestar, Dwarf and other smart-telescope owners: send your raw frames, get back a finished image.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="fonts/fonts.css"><!-- self-hosted (tools/fetch_fonts.py): no visitor data goes to Google -->
 <style>
 /* Layout: one long night-sky scroll; each picture is a before/after slider, captions read like an observing log. */
 :root {
@@ -369,6 +367,7 @@ html { scroll-behavior: smooth; }
       </div>
       <label>Anything else<input type="text" id="ask-note" name="note"></label>
       <label class="trap" aria-hidden="true">Website<input type="text" id="ask-website" name="website" tabindex="-1" autocomplete="off"></label>
+      <p class="sendmsg">By sending, you agree to the <a href="#privacy">privacy note</a>.</p>
       <button type="submit">Send request</button>
       <p class="sendmsg" id="ask-status" aria-live="polite"></p>
     </form>
@@ -410,6 +409,7 @@ html { scroll-behavior: smooth; }
         <input type="file" id="folder" webkitdirectory multiple hidden>
       </label>
       <p class="sendmsg" id="picked">No folder chosen yet.</p>
+      <p class="sendmsg">By sending, you confirm the frames are yours to share, and agree to the <a href="#privacy">privacy note</a>.</p>
       <button type="submit" id="go" disabled>Send</button>
       <div class="bar" hidden><i></i></div>
       <p class="sendmsg" id="status" aria-live="polite"></p>
@@ -580,6 +580,7 @@ html { scroll-behavior: smooth; }
   <footer>
     <p>Gosforth Skies · processing from Gosforth, Newcastle upon Tyne, under 55° N skies.</p>
     <p>Email: <span id="contact">skies at oneoffx dot uk</span></p>
+    <p id="privacy"><b>Privacy.</b> If you send frames or a request, I keep your name and email to reply and deliver, and your frames only until 7 days after you download the result (30 days at most). Nothing is shared or sold, and your picture only appears here if you say yes. Ask me any time to see or delete what I hold. No cookies or tracking on this site.</p>
   </footer>
 </div>
 

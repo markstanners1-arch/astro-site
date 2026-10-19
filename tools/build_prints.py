@@ -87,6 +87,7 @@ REQUEST_FORM = '''    <form class="send" id="ask" novalidate>
       </div>
       <label>Anything else<input type="text" id="ask-note" name="note"></label>
       <label class="trap" aria-hidden="true">Website<input type="text" id="ask-website" name="website" tabindex="-1" autocomplete="off"></label>
+      <p class="sendmsg">By sending, you agree to the <a href="#privacy">privacy note</a>.</p>
       <button type="submit">Send request</button>
       <p class="sendmsg" id="ask-status" aria-live="polite"></p>
     </form>
