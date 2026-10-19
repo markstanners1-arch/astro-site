@@ -15,7 +15,7 @@ SH2-124 (LRGB),Telescope Live,quick render (full processing to follow),4728x3131
 IC 4605 (RGB),Telescope Live,quick render (full processing to follow),4440x3540,428,303,214,151,A4 · A3 · A2,IC 4605,tl_ic4605.jpg,,standard,,,no
 Eagle M16 (LRGB + Ha),Telescope Live,quick render (full processing to follow),2900x2900,351,248,175,124,A4 · A3,"Eagle Nebula, M16",tl_m16.jpg,,standard,23 h 04 min,,yes
 Ring Nebula M57,Telescope Live,finished (binned data),2334x1535,200,141,100,70,A4,"Ring Nebula, M57",tl_m57.jpg,,standard,12 h 50 min,,yes
-IC 1848 wide field (SHO),Telescope Live,finished,4036x4036,488,345,244,172,A4 · A3 · A2,"Heart and Soul, wide field (IC 1805 and IC 1848)",tl_ic1848_wide.jpg,,standard,21 h 50 min,,yes
-IC 1848 Heart and Soul crop (SHO),Telescope Live,finished,3286x2191,265,187,140,99,A4 · A3,"Heart and Soul, Telescope Live",tl_ic1848_heart_soul.jpg,,standard,21 h 50 min,,yes
-IC 1848 Soul crop (SHO),Telescope Live,finished,1989x1327,160,113,85,60,,"Soul Nebula, IC 1848",tl_ic1848_soul.jpg,,standard,21 h 50 min,,no
+IC 1848 wide field (SHO),Telescope Live,finished (2x drizzle),8052x8052,973,689,488,344,A4 · A3 · A2 · A1,"Heart and Soul, wide field (IC 1805 and IC 1848)",tl_ic1848_wide.jpg,,standard,21 h 50 min,,yes
+IC 1848 Heart and Soul crop (SHO),Telescope Live,finished (2x drizzle),6572x4382,530,375,265,187,A4 · A3 · A2 · A1,"Heart and Soul, Telescope Live",tl_ic1848_heart_soul.jpg,,standard,21 h 50 min,,yes
+IC 1848 Soul crop (SHO),Telescope Live,finished (2x drizzle),3978x2654,321,227,160,113,A4 · A3,"Soul Nebula, IC 1848",tl_ic1848_soul.jpg,,standard,21 h 50 min,,yes
 "Andromeda M31, TL + Seestar",mixed,finished,3937x3939,476,337,238,168,A4 · A3 · A2,"Andromeda, deep (Seestar + Telescope Live)",m31_tl_seestar.jpg,,flagship,,,yes
