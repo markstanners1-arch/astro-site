@@ -406,7 +406,7 @@ html { scroll-behavior: smooth; }
       </div>
       <label class="drop" id="drop">
         <b>Choose the folder of frames</b>
-        <span>or drag it here. Only the <code>.fit</code> frames are sent.</span>
+        <span>or drag it here. Only the <code>.fit</code> frames are sent, with any darks, flats and bias.</span>
         <input type="file" id="folder" webkitdirectory multiple hidden>
       </label>
       <p class="sendmsg" id="picked">No folder chosen yet.</p>
@@ -429,8 +429,10 @@ html { scroll-behavior: smooth; }
   const say = (t, err) => { status.textContent = t; status.classList.toggle('err', !!err); };
   function choose(list) {
     const fits = list.filter((f) => /\.(fit|fits|fts|xisf)$/i.test(f.name));
-    const lights = fits.filter((f) => /^light/i.test(f.name));
-    files = lights.length ? lights : fits;                  // a Seestar folder: only the Light_ frames, not the stacked result
+    // named frames (Seestar, NINA, ASIAIR...): send the lights and their calibration frames, skip anything else
+    // (on a Seestar that skips the app's stacked result); a folder of unnamed frames goes as it is
+    const named = fits.filter((f) => /^(light|dark|flat|bias|offset|darkflat|flatdark)/i.test(f.name));
+    files = fits.some((f) => /^light/i.test(f.name)) ? named : fits;
     const big = files.filter((f) => f.size > MAX);
     files = files.filter((f) => f.size <= MAX);
     const total = files.reduce((t, f) => t + f.size, 0);
