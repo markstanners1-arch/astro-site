@@ -5,8 +5,10 @@
 //   PUT  /put?set=&name=     body = one file (under MAX_FILE)                               -> {ok}
 //   GET  /have?set=          names already stored, so an interrupted upload skips them      -> {names}
 //   POST /finish?set=        marks the set complete and emails a note                       -> {ok}
-// Writes need header X-Invite = INVITE_CODE (a Worker secret). Admin calls need Authorization: Bearer ADMIN_KEY:
-//   GET /admin/sets   GET /admin/file?key=   DELETE /admin/set?set=
+//   POST /request            {name, email, object, size, note}: a print request, no invite needed -> {ok}
+// Writes need header X-Invite = one of the invite codes in _config/codes.json in the bucket ({"code": "who it's for"}), so a
+// code can be given to one person and withdrawn on its own without a redeploy. Admin calls need Authorization: Bearer ADMIN_KEY:
+//   GET /admin/sets   GET /admin/file?key=   DELETE /admin/set?set=   GET|PUT /admin/codes
 // Total storage is held under QUOTA so the bucket stays inside R2's free 10 GB.
 import { EmailMessage } from 'cloudflare:email';
 
@@ -36,6 +38,10 @@ async function listAll(bucket, prefix) {
   } while (cursor);
   return out;
 }
+async function codes(env) {
+  const c = await env.BUCKET.get('_config/codes.json');
+  return c ? c.json() : {};
+}
 async function meta(env, set) {
   const m = await env.BUCKET.get(`${set}/_meta.json`);
   return m ? m.json() : null;
@@ -43,7 +49,7 @@ async function meta(env, set) {
 
 async function notify(env, m, count, bytes) {
   const body = [`New frames uploaded to Gosforth Skies.`, ``,
-    `From: ${m.name} <${m.email}>`, `Target: ${m.target}`, `Scope: ${m.scope}`, `Where: ${m.location}`,
+    `From: ${m.name} <${m.email}>`, `Invite code: ${m.invite || '?'}`, `Target: ${m.target}`, `Scope: ${m.scope}`, `Where: ${m.location}`,
     `Files: ${count} (${(bytes / 1e9).toFixed(2)} GB)`, `Set: ${m.set}`, ``,
     `Collect with: python tools/fetch_uploads.py`].join('\r\n');
   const raw = [`From: Gosforth Skies uploads <${env.MAIL_FROM}>`, `To: ${env.MAIL_TO}`,
@@ -63,6 +69,7 @@ export default {
         const objs = await listAll(env.BUCKET, ''), sets = {};
         for (const o of objs) {
           const set = o.key.split('/')[0];
+          if (set.startsWith('_')) continue;          // _config, _requests
           (sets[set] ??= { set, files: [], bytes: 0, done: false });
           if (o.key.endsWith('/_done')) sets[set].done = true;
           else if (!o.key.endsWith('/_meta.json')) { sets[set].files.push({ key: o.key, size: o.size }); sets[set].bytes += o.size; }
@@ -81,10 +88,33 @@ export default {
         for (let i = 0; i < keys.length; i += 1000) await env.BUCKET.delete(keys.slice(i, i + 1000));
         return json(req, { deleted: keys.length });
       }
+      if (p === '/admin/codes' && req.method === 'GET') return json(req, await codes(env));
+      if (p === '/admin/codes' && req.method === 'PUT') {
+        const c = await req.json().catch(() => null);
+        if (!c || typeof c !== 'object' || Array.isArray(c)) return json(req, { error: 'expected {"code": "who"}' }, 400);
+        const clean_ = Object.fromEntries(Object.entries(c).map(([k, v]) => [k.trim().toLowerCase(), clean(v)]));
+        await env.BUCKET.put('_config/codes.json', JSON.stringify(clean_), { httpMetadata: { contentType: 'application/json' } });
+        return json(req, clean_);
+      }
       return json(req, { error: 'unknown' }, 404);
     }
 
-    if (req.headers.get('X-Invite') !== env.INVITE_CODE) return json(req, { error: 'That invite code is not right.' }, 403);
+    if (p === '/request' && req.method === 'POST') {
+      const b = await req.json().catch(() => null);
+      if (!b || b.website) return json(req, { ok: true });          // honeypot field filled: a bot, quietly ignored
+      const r = { name: clean(b.name), email: clean(b.email, 120), object: clean(b.object, 120), size: clean(b.size, 20), note: clean(b.note, 600), at: new Date().toISOString() };
+      if (!r.name || !r.email || !r.object) return json(req, { error: 'Please fill in your name, email and what you would like.' }, 400);
+      await env.BUCKET.put(`_requests/${r.at.replace(/[:.]/g, '-')}.json`, JSON.stringify(r), { httpMetadata: { contentType: 'application/json' } });
+      const raw = [`From: Gosforth Skies requests <${env.MAIL_FROM}>`, `To: ${env.MAIL_TO}`, `Reply-To: ${r.email}`,
+        `Subject: Print request: ${r.object}`, `Message-ID: <${crypto.randomUUID()}@oneoffx.uk>`, `Date: ${new Date().toUTCString()}`,
+        `MIME-Version: 1.0`, `Content-Type: text/plain; charset=utf-8`, ``,
+        `${r.name} <${r.email}> would like: ${r.object}`, `Size: ${r.size || 'not given'}`, ``, r.note || '(no note)'].join('\r\n');
+      try { await env.MAILER.send(new EmailMessage(env.MAIL_FROM, env.MAIL_TO, raw)); } catch (e) { console.log('email failed', e); }
+      return json(req, { ok: true });
+    }
+
+    const invite = (req.headers.get('X-Invite') || '').trim().toLowerCase(), who = (await codes(env))[invite];
+    if (!invite || !who) return json(req, { error: 'That invite code is not right.' }, 403);
 
     if (p === '/start' && req.method === 'POST') {
       const b = await req.json().catch(() => null);
@@ -99,7 +129,7 @@ export default {
       const day = new Date().toISOString().slice(0, 10);
       const slug = (m.name + '-' + m.target).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
       m.set = `${day}-${slug}`;
-      m.files = b.files.length; m.bytes = want; m.started = new Date().toISOString();
+      m.files = b.files.length; m.bytes = want; m.started = new Date().toISOString(); m.invite = who;
       await env.BUCKET.put(`${m.set}/_meta.json`, JSON.stringify(m), { httpMetadata: { contentType: 'application/json' } });
       return json(req, { set: m.set });
     }

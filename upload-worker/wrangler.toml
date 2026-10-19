@@ -1,5 +1,6 @@
 # Upload service for the site's "Send your frames" box. Deploy from this folder:  wrangler deploy
-# Secrets (set once, never in this file, since the repo is public):  INVITE_CODE, ADMIN_KEY, MAIL_TO  via  wrangler secret put <NAME>
+# Secrets (set once, never in this file, since the repo is public):  ADMIN_KEY, MAIL_TO  via  wrangler secret put <NAME>
+# Invite codes live in the bucket (_config/codes.json), managed with PUT /admin/codes, so one can be withdrawn without a redeploy.
 name = "gosforth-upload"
 main = "src/index.js"
 compatibility_date = "2026-10-01"

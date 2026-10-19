@@ -115,6 +115,7 @@ figcaption span { color: var(--dim); font-size: 0.85rem; }
 .bar i { display: block; height: 100%; width: 0; background: var(--oiii); transition: width 0.3s; }
 .sendmsg { font: 400 0.85rem/1.5 var(--font-data); color: var(--dim); }
 .sendmsg.err { color: var(--ha); }
+.send .trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }   /* honeypot: people never see it */
 code { font: 400 0.88em var(--font-data); background: var(--deep); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
 
 /* pricing */
@@ -471,6 +472,25 @@ html { scroll-behavior: smooth; }
       fill.style.width = '100%';
       say(`Done: ${files.length} frames received. Mark has been told and will be in touch.`);
     } catch (err) { say(err.message, true); go.disabled = false; }
+  });
+})();
+// "Not here? Ask for it" in the Prints section: one POST to the same Worker, no invite code
+(() => {
+  const form = document.getElementById('ask'), status = document.getElementById('ask-status');
+  if (!form) return;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(form)), btn = form.querySelector('button');
+    const say = (t, err) => { status.textContent = t; status.classList.toggle('err', !!err); };
+    if (!d.name || !d.email || !d.object) return say('Please fill in your name, email and what you would like.', true);
+    btn.disabled = true; say('Sending…');
+    try {
+      const r = await fetch('https://upload.oneoffx.uk/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || `Request service error ${r.status}`);
+      form.reset(); say("Thanks, your request has reached Mark. He'll reply by email.");
+    } catch (err) { say(err.message, true); }
+    btn.disabled = false;
   });
 })();
 </script>

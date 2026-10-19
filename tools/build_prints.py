@@ -72,7 +72,25 @@ def section(rows):
             '    <div class="prints">\n' + '\n'.join(card(r) for r in rows) + '\n    </div>\n'
             '    <p class="note">P&amp;P: £6 for A4 and A3 (sent flat), £9 for A2 and A1 (rolled in a tube).</p>\n'
             + media_block(rows) + '\n'
-            '    <p class="note">To order, email me with the picture, size and finish.</p>\n  </div>\n</section>')
+            '    <p class="note">To order, email me with the picture, size and finish.</p>\n'
+            + REQUEST_FORM + '  </div>\n</section>')
+
+# "Not here? Ask for it": posts to the upload Worker's /request route (handled by the script at the end of site.html)
+REQUEST_FORM = '''    <form class="send" id="ask" novalidate>
+      <h3>Not here? Ask for it</h3>
+      <p class="sendmsg">Tell me the object or picture you'd like on your wall. I may be able to shoot it or source the data.</p>
+      <div class="fields">
+        <label>Your name<input type="text" id="ask-name" name="name" autocomplete="name" required></label>
+        <label>Email<input type="email" id="ask-email" name="email" autocomplete="email" required></label>
+        <label>What you'd like<input type="text" id="ask-object" name="object" placeholder="e.g. the Orion Nebula" required></label>
+        <label>Size<input type="text" id="ask-size" name="size" placeholder="e.g. A3"></label>
+      </div>
+      <label>Anything else<input type="text" id="ask-note" name="note"></label>
+      <label class="trap" aria-hidden="true">Website<input type="text" id="ask-website" name="website" tabindex="-1" autocomplete="off"></label>
+      <button type="submit">Send request</button>
+      <p class="sendmsg" id="ask-status" aria-live="polite"></p>
+    </form>
+'''
 
 def build():
     rows = [r for r in csv.DictReader(open(ROOT / 'data' / 'print_sizes.csv', encoding='utf8'))
