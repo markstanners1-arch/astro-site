@@ -4,6 +4,9 @@
 //   POST /start              {name, email, target, scope, location, files:[{name,size}]}  -> {set}
 //   PUT  /put?set=&name=     body = one file (under MAX_FILE)                               -> {ok}
 //   GET  /have?set=          names already stored, so an interrupted upload skips them      -> {names}
+//   POST /mpu/start?set=&name=            a file over 90 MB goes in parts instead           -> {uploadId}
+//   PUT  /mpu/part?set=&name=&uploadId=&n= body = one part (50 MB)                        -> {partNumber, etag}
+//   POST /mpu/done?set=&name=&uploadId=   {parts}                                          -> {ok}
 //   POST /finish?set=        marks the set complete and emails a note                       -> {ok}
 //   POST /request            {name, email, object, size, note}: a print request, no invite needed -> {ok}
 // Writes need header X-Invite = one of the invite codes in _config/codes.json in the bucket ({"code": "who it's for"}), so a
@@ -25,7 +28,8 @@
 import { EmailMessage } from 'cloudflare:email';
 
 const QUOTA = 9e9;
-const MAX_FILE = 95e6;                       // a Worker request body can be up to 100 MB on the free plan
+const MAX_FILE = 95e6;                       // a Worker request body can be up to 100 MB on the free plan: bigger files use /mpu
+const MAX_BIG = 2e9;                         // largest single frame accepted in parts (61 MP cameras are about 120 MB)
 const OK_EXT = /\.(fit|fits|fts|xisf)$/i;
 const SITE = 'https://astro.oneoffx.uk';
 
@@ -223,7 +227,7 @@ export default {
       const m = { name: clean(b.name), email: clean(b.email, 120), target: clean(b.target), scope: clean(b.scope), location: clean(b.location) };
       if (!m.name || !m.email || !m.target) return json(req, { error: 'Please fill in your name, email and target.' }, 400);
       const want = b.files.reduce((t, f) => t + (Number(f.size) || 0), 0);
-      if (b.files.some((f) => Number(f.size) > MAX_FILE)) return json(req, { error: 'One of the files is over 95 MB. Email me and we will sort another way.' }, 400);
+      if (b.files.some((f) => Number(f.size) > MAX_BIG)) return json(req, { error: 'One of the files is over 2 GB. Email me and we will sort another way.' }, 400);
       const used = (await listAll(env.BUCKET, '')).reduce((t, o) => t + o.size, 0);
       if (used + want > QUOTA) return json(req, { error: 'The upload store is full just now. Email me and I will make room.' }, 507);
       // an interrupted upload from the same person for the same target carries on in its set
@@ -249,6 +253,25 @@ export default {
       if (!size || size > MAX_FILE) return json(req, { error: `${name} is too big.` }, 400);
       await env.BUCKET.put(`${set}/${name}`, req.body);
       return json(req, { ok: true });
+    }
+    if (p.startsWith('/mpu/')) {
+      const name = safeName(q.get('name'));
+      if (!OK_EXT.test(name)) return json(req, { error: `${name} is not a FITS frame.` }, 400);
+      const key = `${set}/${name}`;
+      if (p === '/mpu/start' && req.method === 'POST') return json(req, { uploadId: (await env.BUCKET.createMultipartUpload(key)).uploadId });
+      const mpu = env.BUCKET.resumeMultipartUpload(key, q.get('uploadId') || '');
+      if (p === '/mpu/part' && req.method === 'PUT') {
+        const size = Number(req.headers.get('Content-Length') || 0), n = Number(q.get('n'));
+        if (!size || size > MAX_FILE || !(n >= 1 && n <= 100)) return json(req, { error: 'bad part' }, 400);
+        return json(req, await mpu.uploadPart(n, req.body));
+      }
+      if (p === '/mpu/done' && req.method === 'POST') {
+        const b = await req.json().catch(() => null);
+        if (!b || !Array.isArray(b.parts) || !b.parts.length) return json(req, { error: 'no parts' }, 400);
+        await mpu.complete(b.parts);
+        return json(req, { ok: true });
+      }
+      return json(req, { error: 'unknown' }, 404);
     }
     if (p === '/finish' && req.method === 'POST') {
       const m = await meta(env, set);

@@ -420,7 +420,8 @@ html { scroll-behavior: smooth; }
 // Upload box: filters the chosen folder down to the light frames, sends them four at a time to the upload Worker,
 // retries failures, and skips files already sent if the same person sends the same target again the same day.
 (() => {
-  const API = 'https://upload.oneoffx.uk', MAX = 95e6, form = document.getElementById('send');
+  // files up to SMALL go in one request; bigger ones (61 MP cameras, about 120 MB a frame) go in PART-sized pieces
+  const API = 'https://upload.oneoffx.uk', MAX = 2e9, SMALL = 90e6, PART = 50 * 1024 * 1024, form = document.getElementById('send');
   const drop = document.getElementById('drop'), pick = document.getElementById('folder'), go = document.getElementById('go');
   const picked = document.getElementById('picked'), status = document.getElementById('status');
   const bar = form.querySelector('.bar'), fill = bar.firstElementChild;
@@ -436,8 +437,9 @@ html { scroll-behavior: smooth; }
     const big = files.filter((f) => f.size > MAX);
     files = files.filter((f) => f.size <= MAX);
     const total = files.reduce((t, f) => t + f.size, 0);
-    picked.textContent = files.length ? `${files.length} frames, ${gb(total)}` + (big.length ? ` (${big.length} too big, skipped)` : '')
-                                      : 'No .fit frames found in that folder.';
+    picked.textContent = files.length ? `${files.length} frames, ${gb(total)}` + (big.length ? ` (${big.length} over 2 GB, skipped: email Mark about those)` : '')
+                       : big.length ? 'These frames are over 2 GB each, too big for the upload box. Email Mark and he will sort another way.'
+                                    : 'No .fit frames found in that folder.';
     go.disabled = !files.length;
   }
   pick.addEventListener('change', () => choose([...pick.files]));
@@ -479,13 +481,31 @@ html { scroll-behavior: smooth; }
       let sent = total - todo.reduce((t, f) => t + f.size, 0), failed = 0, next = 0;
       const show = () => { fill.style.width = (100 * sent / total).toFixed(1) + '%'; say(`Sending… ${gb(sent)} of ${gb(total)}`); };
       show();
+      const retry = async (fn) => {
+        for (let tryNo = 1; ; tryNo++) {
+          try { return await fn(); }
+          catch (err) { if (tryNo === 3) throw err; await new Promise((ok) => setTimeout(ok, 2000 * tryNo)); }
+        }
+      };
+      async function sendBig(f) {                     // in parts; each part retried on its own
+        const q = `set=${set}&name=${encodeURIComponent(f.name)}`;
+        const { uploadId } = await retry(() => call(`/mpu/start?${q}`, { method: 'POST' }));
+        const parts = [];
+        for (let n = 1, at = 0; at < f.size; n++, at += PART) {
+          const piece = f.slice(at, Math.min(at + PART, f.size));
+          parts.push(await retry(() => call(`/mpu/part?${q}&uploadId=${encodeURIComponent(uploadId)}&n=${n}`, { method: 'PUT', body: piece })));
+          sent += piece.size; show();
+        }
+        await retry(() => call(`/mpu/done?${q}&uploadId=${encodeURIComponent(uploadId)}`, { method: 'POST',
+          headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ parts }) }));
+      }
       async function worker() {
         while (next < todo.length) {
-          const f = todo[next++];
-          for (let tryNo = 1; ; tryNo++) {
-            try { await call(`/put?set=${set}&name=${encodeURIComponent(f.name)}`, { method: 'PUT', body: f }); sent += f.size; show(); break; }
-            catch (err) { if (tryNo === 3) { failed++; break; } await new Promise((ok) => setTimeout(ok, 2000 * tryNo)); }
-          }
+          const f = todo[next++], before = sent;
+          try {
+            if (f.size > SMALL) await sendBig(f);
+            else { await retry(() => call(`/put?set=${set}&name=${encodeURIComponent(f.name)}`, { method: 'PUT', body: f })); sent += f.size; show(); }
+          } catch (err) { failed++; sent = before; show(); }
         }
       }
       await Promise.all([worker(), worker(), worker(), worker()]);
