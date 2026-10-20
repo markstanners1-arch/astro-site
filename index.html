@@ -12,7 +12,7 @@ img { max-width: 100%; }
 </style>
 <title>Gosforth Skies</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Astrophotography processing for Seestar, Dwarf and other smart-telescope owners: send your raw frames, get back a finished image.">
+<meta name="description" content="Astrophotography processing for smart telescopes and dedicated astro cameras: send your raw frames, get back a finished image.">
 <link rel="stylesheet" href="fonts/fonts.css"><!-- self-hosted (tools/fetch_fonts.py): no visitor data goes to Google -->
 <style>
 /* Layout: one long night-sky scroll; each picture is a before/after slider, captions read like an observing log. */
@@ -163,9 +163,9 @@ html { scroll-behavior: smooth; }
 
   <div class="hero">
     <div>
-      <p class="eyebrow">Image processing for smart telescopes</p>
+      <p class="eyebrow">Image processing for smart telescopes and astro cameras</p>
       <h1>Your Seestar already caught the light. <em>Let's develop it.</em></h1>
-      <p class="lede">Send me the raw frames from your Seestar, Dwarf, Vespera, or any smart telescope that saves FITS files. I screen out the cloudy ones, stack the rest properly and process them into a finished picture you'll want on the wall.</p>
+      <p class="lede">Send me the raw frames from your Seestar, Dwarf, Vespera, or your own telescope and astro camera, colour or mono with filters. I screen out the cloudy ones, stack the rest properly and process them into a finished picture you'll want on the wall.</p>
       <a class="cta" href="#how">See how it works</a>
     </div>
     <div class="ba" style="--pos:50%">
@@ -395,7 +395,7 @@ html { scroll-behavior: smooth; }
     <div class="steps">
       <div class="step">
         <h3>Send the frames</h3>
-        <p>Pick the folder of individual frames in the box below and it does the rest. On a Seestar that's the <code>…_sub</code> folder, full of <code>Light_*.fit</code> files; you can pick the whole folder and only the frames are sent.</p>
+        <p>Pick the folder of individual frames in the box below and it does the rest. On a Seestar that's the <code>…_sub</code> folder, full of <code>Light_*.fit</code> files; you can pick the whole folder and only the frames are sent. From ASIAIR, NINA and similar, include your flats, darks and bias; they go up with the lights.</p>
       </div>
       <div class="step">
         <h3>I process them</h3>
@@ -591,7 +591,8 @@ html { scroll-behavior: smooth; }
     <div class="faq">
       <details><summary>Who owns the finished image?</summary><p>You do. It's your data and your picture. I'll only show it here if you say yes.</p></details>
       <details><summary>Do you use AI tools?</summary><p>Yes, and openly. Noise reduction, star removal and sharpening use specialist astronomy tools that run on trained models, alongside conventional PixInsight processing. These tools can occasionally make up detail, so every result is checked at full size against the plain stack, and anything that isn't in your frames comes out.</p></details>
-      <details><summary>Which telescopes work?</summary><p>Any telescope that saves its individual frames as FITS files. So far: the ZWO Seestar S30 and S50, DWARFLAB's Dwarf range including the new Draco, and the Vaonis Vespera. Vespera files need a small correction before stacking (their colour layout is labelled upside down), which I handle as part of the job. If yours isn't listed, send a few frames and I'll check them first.</p></details>
+      <details><summary>Which telescopes work?</summary><p>Any setup that saves its individual frames as FITS files. Smart telescopes so far: the ZWO Seestar S30 and S50, DWARFLAB's Dwarf range including the new Draco, and the Vaonis Vespera (its files need a small correction before stacking, which I handle). Dedicated rigs work too: any telescope with a colour or mono astro camera, from ASIAIR, NINA or similar. With a mono camera, send each filter's frames (Hα, OIII, SII, or L, R, G, B) and I'll combine them into colour. If yours is something else, send a few frames and I'll check them first.</p></details>
+      <details><summary>Do I need calibration frames?</summary><p>Smart telescopes handle this themselves, so just send the lights. With your own camera, flats matter most: they remove dust shadows and the darkening towards the corners. Darks and bias help too. Send whatever you have, and say if they came from a different night.</p></details>
       <details><summary>How much data should I send?</summary><p>An hour is enough for bright targets. Faint nebulae and galaxies really reward three hours or more, and several nights of the same target can be combined.</p></details>
       <details><summary>What happens to my files afterwards?</summary><p>You get a private download link for the finished picture. Seven days after you first download it, the link closes and your raw frames are deleted; if the link isn't opened, everything is cleared after 30 days. If you'd like your frames kept for adding more nights later, just say. I keep a copy of the finished picture and your name and email so I can send it again, and nothing is shared with anyone else.</p></details>
     </div>
