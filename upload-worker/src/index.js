@@ -110,7 +110,9 @@ function downloadPage(j, files) {
   const mb = (n) => (n / 1e6).toFixed(n > 1e8 ? 0 : 1) + ' MB';
   const listed = files.filter((f) => !(j.review || []).some((r) => r.file === f.name) && f.name !== j.before);
   const rows = listed.map((f) => `<li><a href="/d/${j.job}/${encodeURIComponent(f.name)}">${esc(f.name)}</a><span>${mb(f.size)}</span></li>`).join('');
-  const body = j.cleared
+  const body = j.cleared && j.moved && /^https:\/\/upload\.oneoffx\.uk\/d\/[\w-]+$/.test(j.moved)
+    ? `<p>This page has been updated. Your pictures are now here:</p><p><a href="${j.moved}">${esc(j.moved)}</a></p>`
+    : j.cleared
     ? `<p>These files have been cleared. If you still need them, reply to Mark's email and he'll send them again.</p>`
     : reviewBlock(j) + (rows ? `<h2>Downloads</h2><ul>${rows}</ul><p class="n">The TIFF is the full-size file for printing; the JPEG is for sharing. The link stays open for 7 days after your first download.</p>` : '');
   return `<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -190,6 +192,7 @@ export default {
       if (p === '/admin/outbox/job' && req.method === 'DELETE') {          // clear a job by hand (keeps its record)
         const j = await job(env, q.get('job') || '');
         if (!j) return json(req, { error: 'unknown job' }, 404);
+        if (q.get('moved')) j.moved = q.get('moved').slice(0, 300);          // a replaced review page points to its new address
         await clearJob(env, j, 'cleared by hand');
         return json(req, { ok: true });
       }
