@@ -86,18 +86,43 @@ async function clearJob(env, j, why) {
   await putJob(env, j);
 }
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// a review job (j.review = [{file, label}], optional j.before) shows the versions to choose between, with a form whose
+// choice and comment go to Mark; viewing them (?view=1) doesn't count as a download, so the 7-day clock doesn't start
+function reviewBlock(j) {
+  if (!j.review || !j.review.length) return '';
+  const pic = (file, label) => `<figure><a href="/d/${j.job}/${encodeURIComponent(file)}?view=1" target="_blank" rel="noopener">` +
+    `<img src="/d/${j.job}/${encodeURIComponent(file)}?view=1" alt="${esc(label)}" loading="lazy"></a><figcaption>${esc(label)}</figcaption></figure>`;
+  const before = j.before ? `<p class="n">Before: your telescope app's own picture.</p><div class="g one">${pic(j.before, 'As stacked by the app')}</div>` : '';
+  const opts = j.review.map((r, i) => `<label class="opt"><input type="radio" name="choice" value="${esc(r.label)}"${i ? '' : ' required'}> ${esc(r.label)}</label>`).join('');
+  const done = j.feedback ? `<p class="ok">Thanks: you picked <b>${esc(j.feedback.choice)}</b>. Mark has your note and will send the full-size file.</p>` : '';
+  return `${before}<h2>Pick your favourite</h2><p class="n">Click a picture to see it larger.</p><div class="g">${j.review.map((r) => pic(r.file, r.label)).join('')}</div>
+${done}<form id="pick"${j.feedback ? ' hidden' : ''}><fieldset><legend>Your favourite</legend>${opts}</fieldset>
+<label class="c">Anything you'd change? (brighter, less red, crop tighter…)<textarea name="comment" rows="3"></textarea></label>
+<button>Send my choice</button><p class="n" id="msg"></p></form>
+<script>document.getElementById('pick')?.addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),m=document.getElementById('msg');
+m.textContent='Sending…';try{const r=await fetch(location.pathname.replace(/\\/$/,'')+'/choose',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({choice:f.get('choice'),comment:f.get('comment')})});if(!r.ok)throw 0;e.target.hidden=true;m.textContent='';
+e.target.insertAdjacentHTML('afterend','<p class="ok">Thanks: Mark has your choice and will send the full-size file.</p>')}catch{m.textContent='That didn\\'t send. Please try again.'}})</script>`;
+}
 function downloadPage(j, files) {
   const mb = (n) => (n / 1e6).toFixed(n > 1e8 ? 0 : 1) + ' MB';
-  const rows = files.map((f) => `<li><a href="/d/${j.job}/${encodeURIComponent(f.name)}">${esc(f.name)}</a><span>${mb(f.size)}</span></li>`).join('');
+  const listed = files.filter((f) => !(j.review || []).some((r) => r.file === f.name) && f.name !== j.before);
+  const rows = listed.map((f) => `<li><a href="/d/${j.job}/${encodeURIComponent(f.name)}">${esc(f.name)}</a><span>${mb(f.size)}</span></li>`).join('');
   const body = j.cleared
     ? `<p>These files have been cleared. If you still need them, reply to Mark's email and he'll send them again.</p>`
-    : `<ul>${rows}</ul><p class="n">The TIFF is the full-size file for printing; the JPEG is for sharing. The link stays open for 7 days after your first download.</p>`;
+    : reviewBlock(j) + (rows ? `<h2>Downloads</h2><ul>${rows}</ul><p class="n">The TIFF is the full-size file for printing; the JPEG is for sharing. The link stays open for 7 days after your first download.</p>` : '');
   return `<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><title>${esc(j.title)} · Gosforth Skies</title><style>
 body{margin:0;background:#0b1019;color:#e6e9ef;font:16px/1.6 system-ui,sans-serif}main{max-width:640px;margin:0 auto;padding:40px 16px}
 h1{font:400 1.9rem/1.2 Georgia,serif;margin:0 0 6px}.e{font:500 .75rem ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:#e0664d}
 ul{list-style:none;padding:0;margin:24px 0;display:grid;gap:10px}li{display:flex;justify-content:space-between;gap:12px;background:#121a27;border:1px solid #243046;border-radius:8px;padding:14px 16px}
-a{color:#e6e9ef;font-weight:600;text-decoration-color:#e0664d;overflow-wrap:anywhere}span,.n{color:#95a0b4;font-size:.9rem}</style></head>
+a{color:#e6e9ef;font-weight:600;text-decoration-color:#e0664d;overflow-wrap:anywhere}span,.n{color:#95a0b4;font-size:.9rem}
+main{max-width:960px}h2{font:400 1.4rem Georgia,serif;margin:32px 0 8px}.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:16px;margin:12px 0}
+.g.one{grid-template-columns:minmax(0,420px)}figure{margin:0}figure img{width:100%;border-radius:6px;display:block;background:#000}figcaption{color:#95a0b4;font-size:.9rem;margin-top:6px}
+form{background:#121a27;border:1px solid #e0664d;border-radius:8px;padding:18px;display:grid;gap:12px;margin-top:16px}fieldset{border:0;padding:0;margin:0;display:grid;gap:6px}
+legend{font-weight:600;margin-bottom:6px}.opt{display:flex;gap:8px;align-items:center}.c{display:grid;gap:6px;color:#95a0b4;font-size:.9rem}
+textarea{font:inherit;color:#e6e9ef;background:#0b1019;border:1px solid #243046;border-radius:6px;padding:8px}button{justify-self:start;padding:11px 20px;border:0;border-radius:999px;background:#e0664d;color:#fff;font:600 .95rem system-ui,sans-serif;cursor:pointer}
+.ok{color:#5fb7b0;font-weight:600}</style></head>
 <body><main><p class="e">Gosforth Skies</p><h1>${esc(j.title)}</h1><p>Processed for ${esc(j.client)} by Mark Stanners.</p>${body}</main></body></html>`;
 }
 
@@ -155,6 +180,8 @@ export default {
         const rnd = [...crypto.getRandomValues(new Uint8Array(10))].map((x) => x.toString(16).padStart(2, '0')).join('');
         const j = { job: `${slug}-${rnd}`, client: clean(b.client), email: clean(b.email, 120), title: clean(b.title, 120), set: clean(b.set, 120),
           created: new Date().toISOString(), first_download: null, nudged: false, cleared: null };
+        if (Array.isArray(b.review)) j.review = b.review.slice(0, 8).map((r) => ({ file: safeName(r.file), label: clean(r.label, 80) }));
+        if (b.before) j.before = safeName(b.before);
         await putJob(env, j);
         return json(req, { job: j.job, link: `${url.origin}/d/${j.job}` });
       }
@@ -186,6 +213,18 @@ export default {
       return json(req, { error: 'unknown' }, 404);
     }
 
+    if (p.startsWith('/d/') && p.endsWith('/choose') && req.method === 'POST') {
+      const id = p.split('/')[2], j = /^[\w-]+$/.test(id || '') ? await job(env, id) : null;
+      if (!j || !j.review) return json(req, { error: 'unknown' }, 404);
+      const b = await req.json().catch(() => null);
+      const choice = clean(b?.choice, 80), comment = String(b?.comment || '').slice(0, 1500);
+      if (!choice || !j.review.some((r) => r.label === choice)) return json(req, { error: 'pick one' }, 400);
+      j.feedback = { choice, comment, at: new Date().toISOString() };
+      await putJob(env, j);
+      await tellMark(env, `${j.client} picked: ${choice} (${j.title})`, [`${j.client} chose "${choice}" for ${j.title}.`, ``, comment ? `Their note: ${comment}` : '(no note)', ``,
+        `Their page: https://upload.oneoffx.uk/d/${j.job}`]);
+      return json(req, { ok: true });
+    }
     if (p.startsWith('/d/') && req.method === 'GET') {
       const [, , id, file] = p.split('/');
       const j = /^[\w-]+$/.test(id || '') ? await job(env, id) : null;
@@ -194,6 +233,7 @@ export default {
       const name = safeName(decodeURIComponent(file));
       const o = j.cleared ? null : await env.BUCKET.get(`_outbox/${id}/${name}`);
       if (!o) return new Response('That file has gone. Reply to Mark and he will send it again.', { status: 404 });
+      if (q.get('view')) return new Response(o.body, { headers: { 'Content-Type': o.httpMetadata?.contentType || 'image/jpeg', 'Content-Length': o.size, 'Cache-Control': 'private, max-age=3600' } });
       if (!j.first_download) {
         j.first_download = new Date().toISOString();
         await putJob(env, j);
