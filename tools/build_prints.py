@@ -71,8 +71,10 @@ def section(rows):
             '    <p class="eyebrow" style="margin-top:28px">Indicative prices during the pilot · unframed fine-art giclée</p>\n'
             '    <div class="prints">\n' + '\n'.join(card(r) for r in rows) + '\n    </div>\n'
             '    <p class="note">P&amp;P: £6 for A4 and A3 (sent flat), £9 for A2 and A1 (rolled in a tube).</p>\n'
+            '    <p class="note">Free on request: a small legend in the corner with the object\'s name and a line about it, and a '
+            'signature. Nice for a gift; say if you\'d like your own wording or a name added.</p>\n'
             + media_block(rows) + '\n'
-            '    <p class="note">To order, email me with the picture, size and finish.</p>\n'
+            '    <p class="note">To order, email me with the picture, size and finish, and whether you\'d like the legend.</p>\n'
             + REQUEST_FORM + '  </div>\n</section>')
 
 # "Not here? Ask for it": posts to the upload Worker's /request route (handled by the script at the end of site.html)
