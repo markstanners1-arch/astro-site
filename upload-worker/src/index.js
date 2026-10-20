@@ -230,11 +230,18 @@ export default {
       if (b.files.some((f) => Number(f.size) > MAX_BIG)) return json(req, { error: 'One of the files is over 2 GB. Email me and we will sort another way.' }, 400);
       const used = (await listAll(env.BUCKET, '')).reduce((t, o) => t + o.size, 0);
       if (used + want > QUOTA) return json(req, { error: 'The upload store is full just now. Email me and I will make room.' }, 507);
-      // an interrupted upload from the same person for the same target carries on in its set
+      // an interrupted upload from the same person for the same target carries on in its set, even on a later day
+      // (Alistair's NGC 6888 stalled overnight on 19-20 Oct): reuse an unfinished set with the same name and target
+      // from the last 7 days, otherwise start a new dated one
       const day = new Date().toISOString().slice(0, 10);
       const slug = (m.name + '-' + m.target).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
       m.set = `${day}-${slug}`;
-      m.files = b.files.length; m.bytes = want; m.started = new Date().toISOString(); m.invite = who;
+      for (let back = 1; back <= 7; back++) {
+        const earlier = `${new Date(Date.now() - back * DAY).toISOString().slice(0, 10)}-${slug}`;
+        const em = await meta(env, earlier);
+        if (em && !(await env.BUCKET.head(`${earlier}/_done`))) { m.set = earlier; m.started = em.started; break; }
+      }
+      m.files = b.files.length; m.bytes = want; m.started ??= new Date().toISOString(); m.invite = who;
       await env.BUCKET.put(`${m.set}/_meta.json`, JSON.stringify(m), { httpMetadata: { contentType: 'application/json' } });
       return json(req, { set: m.set });
     }
