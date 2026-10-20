@@ -93,16 +93,18 @@ function reviewBlock(j) {
   const pic = (file, label) => `<figure><a href="/d/${j.job}/${encodeURIComponent(file)}?view=1" target="_blank" rel="noopener">` +
     `<img src="/d/${j.job}/${encodeURIComponent(file)}?view=1" alt="${esc(label)}" loading="lazy"></a><figcaption>${esc(label)}</figcaption></figure>`;
   const before = j.before ? `<p class="n">Before: your telescope app's own picture.</p><div class="g one">${pic(j.before, 'As stacked by the app')}</div>` : '';
-  const opts = j.review.map((r, i) => `<label class="opt"><input type="radio" name="choice" value="${esc(r.label)}"${i ? '' : ' required'}> ${esc(r.label)}</label>`).join('');
-  const done = j.feedback ? `<p class="ok">Thanks: you picked <b>${esc(j.feedback.choice)}</b>. Mark has your note and will send the full-size file.</p>` : '';
-  return `${before}<h2>Pick your favourite</h2><p class="n">Click a picture to see it larger.</p><div class="g">${j.review.map((r) => pic(r.file, r.label)).join('')}</div>
-${done}<form id="pick"${j.feedback ? ' hidden' : ''}><fieldset><legend>Your favourite</legend>${opts}</fieldset>
+  const opts = j.review.map((r) => `<label class="opt"><input type="checkbox" name="choice" value="${esc(r.label)}"> ${esc(r.label)}</label>`).join('')
+    + `<label class="opt all"><input type="checkbox" id="all"> All of them</label>`;
+  const done = j.feedback ? `<p class="ok">Thanks: you picked <b>${esc([].concat(j.feedback.choice).join(', '))}</b>. Mark has your note and will send the full-size files.</p>` : '';
+  return `${before}<h2>Pick your favourites</h2><p class="n">Click a picture to see it larger.</p><div class="g">${j.review.map((r) => pic(r.file, r.label)).join('')}</div>
+${done}<form id="pick"${j.feedback ? ' hidden' : ''}><fieldset><legend>Tick the ones you'd like as full-size files (as many as you like)</legend>${opts}</fieldset>
 <label class="c">Anything you'd change? (brighter, less red, crop tighter…)<textarea name="comment" rows="3"></textarea></label>
-<button>Send my choice</button><p class="n" id="msg"></p></form>
-<script>document.getElementById('pick')?.addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),m=document.getElementById('msg');
+<button>Send my choices</button><p class="n" id="msg"></p></form>
+<script>const A=document.getElementById('all');A?.addEventListener('change',()=>document.querySelectorAll('input[name=choice]').forEach(x=>x.checked=A.checked));
+document.getElementById('pick')?.addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),m=document.getElementById('msg');if(!f.getAll('choice').length){m.textContent='Tick at least one.';return}
 m.textContent='Sending…';try{const r=await fetch(location.pathname.replace(/\\/$/,'')+'/choose',{method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({choice:f.get('choice'),comment:f.get('comment')})});if(!r.ok)throw 0;e.target.hidden=true;m.textContent='';
-e.target.insertAdjacentHTML('afterend','<p class="ok">Thanks: Mark has your choice and will send the full-size file.</p>')}catch{m.textContent='That didn\\'t send. Please try again.'}})</script>`;
+body:JSON.stringify({choice:f.getAll('choice'),comment:f.get('comment')})});if(!r.ok)throw 0;e.target.hidden=true;m.textContent='';
+e.target.insertAdjacentHTML('afterend','<p class="ok">Thanks: Mark has your choices and will send the full-size files.</p>')}catch{m.textContent='That didn\\'t send. Please try again.'}})</script>`;
 }
 function downloadPage(j, files) {
   const mb = (n) => (n / 1e6).toFixed(n > 1e8 ? 0 : 1) + ' MB';
@@ -217,11 +219,13 @@ export default {
       const id = p.split('/')[2], j = /^[\w-]+$/.test(id || '') ? await job(env, id) : null;
       if (!j || !j.review) return json(req, { error: 'unknown' }, 404);
       const b = await req.json().catch(() => null);
-      const choice = clean(b?.choice, 80), comment = String(b?.comment || '').slice(0, 1500);
-      if (!choice || !j.review.some((r) => r.label === choice)) return json(req, { error: 'pick one' }, 400);
+      // any number of versions can be chosen; each comes back as a full-size file
+      const choice = [].concat(b?.choice || []).map((x) => clean(x, 80)).filter((x) => j.review.some((r) => r.label === x));
+      const comment = String(b?.comment || '').slice(0, 1500);
+      if (!choice.length) return json(req, { error: 'pick at least one' }, 400);
       j.feedback = { choice, comment, at: new Date().toISOString() };
       await putJob(env, j);
-      await tellMark(env, `${j.client} picked: ${choice} (${j.title})`, [`${j.client} chose "${choice}" for ${j.title}.`, ``, comment ? `Their note: ${comment}` : '(no note)', ``,
+      await tellMark(env, `${j.client} picked ${choice.length === j.review.length ? 'all of them' : choice.join(', ')} (${j.title})`, [`${j.client} chose: ${choice.join(', ')} for ${j.title}.`, ``, comment ? `Their note: ${comment}` : '(no note)', ``,
         `Their page: https://upload.oneoffx.uk/d/${j.job}`]);
       return json(req, { ok: true });
     }
