@@ -436,6 +436,15 @@ html { scroll-behavior: smooth; }
     // (on a Seestar that skips the app's stacked result); a folder of unnamed frames goes as it is
     const named = fits.filter((f) => /^(light|dark|flat|bias|offset|darkflat|flatdark)/i.test(f.name));
     files = fits.some((f) => /^light/i.test(f.name)) ? named : fits;
+    // frames are stored by name, so two files with the same name in different subfolders (NINA's per-filter flats:
+    // Flats/Ha/Flat_0001.fits and Flats/OIII/Flat_0001.fits) would overwrite each other: those get their subfolders
+    // added to the name. Unique names go as they are, so a restarted upload still recognises what already arrived.
+    const count = {};
+    files.forEach((f) => { count[f.name] = (count[f.name] || 0) + 1; });
+    files.forEach((f) => {
+      const parts = (f.rel || f.webkitRelativePath || f.name).split('/').filter(Boolean);
+      f.sendName = count[f.name] > 1 && parts.length > 2 ? parts.slice(1, -1).join('_') + '_' + f.name : f.name;
+    });
     const big = files.filter((f) => f.size > MAX);
     files = files.filter((f) => f.size <= MAX);
     const total = files.reduce((t, f) => t + f.size, 0);
@@ -446,7 +455,7 @@ html { scroll-behavior: smooth; }
   }
   pick.addEventListener('change', () => choose([...pick.files]));
   async function walk(entry, out) {
-    if (entry.isFile) out.push(await new Promise((ok, no) => entry.file(ok, no)));
+    if (entry.isFile) { const f = await new Promise((ok, no) => entry.file(ok, no)); f.rel = entry.fullPath; out.push(f); }
     else if (entry.isDirectory) {
       const reader = entry.createReader();
       for (let batch; (batch = await new Promise((ok, no) => reader.readEntries(ok, no))).length; )
@@ -482,9 +491,9 @@ html { scroll-behavior: smooth; }
       };
       say('Starting…');
       const { set } = await call('/start', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...d, code: undefined, files: files.map((f) => ({ name: f.name, size: f.size })) }) });
+        body: JSON.stringify({ ...d, code: undefined, files: files.map((f) => ({ name: f.sendName, size: f.size })) }) });
       const have = new Set((await call(`/have?set=${set}`)).names);
-      const todo = files.filter((f) => !have.has(f.name.replace(/[^\w .()+-]/g, '')));
+      const todo = files.filter((f) => !have.has(f.sendName.replace(/[^\w .()+-]/g, '')));
       const total = files.reduce((t, f) => t + f.size, 0);
       let sent = total - todo.reduce((t, f) => t + f.size, 0), failed = 0, next = 0;
       const show = () => { fill.style.width = (100 * sent / total).toFixed(1) + '%'; say(`Sending… ${gb(sent)} of ${gb(total)}`); };
@@ -496,7 +505,7 @@ html { scroll-behavior: smooth; }
         }
       };
       async function sendBig(f) {                     // in parts; each part retried on its own
-        const q = `set=${set}&name=${encodeURIComponent(f.name)}`;
+        const q = `set=${set}&name=${encodeURIComponent(f.sendName)}`;
         const { uploadId } = await retry(() => call(`/mpu/start?${q}`, { method: 'POST' }));
         const parts = [];
         for (let n = 1, at = 0; at < f.size; n++, at += PART) {
@@ -512,7 +521,7 @@ html { scroll-behavior: smooth; }
           const f = todo[next++], before = sent;
           try {
             if (f.size > SMALL) await sendBig(f);
-            else { await retry(() => call(`/put?set=${set}&name=${encodeURIComponent(f.name)}`, { method: 'PUT', body: f })); sent += f.size; show(); }
+            else { await retry(() => call(`/put?set=${set}&name=${encodeURIComponent(f.sendName)}`, { method: 'PUT', body: f })); sent += f.size; show(); }
           } catch (err) { failed++; sent = before; show(); }
         }
       }

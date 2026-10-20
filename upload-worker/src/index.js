@@ -126,7 +126,7 @@ export default {
           if (set.startsWith('_')) continue;          // _config, _requests
           (sets[set] ??= { set, files: [], bytes: 0, done: false });
           if (o.key.endsWith('/_done')) sets[set].done = true;
-          else if (!o.key.endsWith('/_meta.json')) { sets[set].files.push({ key: o.key, size: o.size }); sets[set].bytes += o.size; }
+          else if (!o.key.endsWith('/_meta.json')) { sets[set].files.push({ key: o.key, size: o.size, uploaded: o.uploaded }); sets[set].bytes += o.size; }
         }
         for (const s of Object.values(sets)) s.meta = await meta(env, s.set);
         return json(req, Object.values(sets));
