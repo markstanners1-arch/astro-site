@@ -409,6 +409,7 @@ html { scroll-behavior: smooth; }
         <input type="file" id="folder" webkitdirectory multiple hidden>
       </label>
       <p class="sendmsg" id="picked">No folder chosen yet.</p>
+      <p class="sendmsg">Keep this page open and the computer awake until it says Done. If it stops (the laptop slept, the connection dropped), come back any time within a week, fill in the same name and target, pick the same folder and press Send: it carries on where it stopped.</p>
       <p class="sendmsg">By sending, you confirm the frames are yours to share, and agree to the <a href="#privacy">privacy note</a>.</p>
       <button type="submit" id="go" disabled>Send</button>
       <div class="bar" hidden><i></i></div>
@@ -465,6 +466,12 @@ html { scroll-behavior: smooth; }
     if (!d.code || !d.name || !d.email || !d.target) return say('Please fill in the invite code, your name, email and target.', true);
     const H = { 'X-Invite': d.code.trim() };
     go.disabled = true; bar.hidden = false; fill.style.width = '0';
+    // while sending: ask the browser to keep the screen (and so the computer) awake, and warn before the page is closed
+    let lock = null;
+    try { lock = await navigator.wakeLock?.request('screen'); } catch (err) { /* not offered: carry on without it */ }
+    const leaving = (ev) => { ev.preventDefault(); ev.returnValue = ''; };
+    window.addEventListener('beforeunload', leaving);
+    const settle = () => { window.removeEventListener('beforeunload', leaving); lock?.release().catch(() => {}); };
     try {
       const call = async (path, opts = {}) => {
         const r = await fetch(API + path, { ...opts, headers: { ...H, ...(opts.headers || {}) } });
@@ -513,7 +520,8 @@ html { scroll-behavior: smooth; }
       await call(`/finish?set=${set}`, { method: 'POST' });
       fill.style.width = '100%';
       say(`Done: ${files.length} frames received. Mark has been told and will be in touch.`);
-    } catch (err) { say(err.message, true); go.disabled = false; }
+      settle();
+    } catch (err) { say(err.message, true); go.disabled = false; settle(); }
   });
 })();
 // "Not here? Ask for it" in the Prints section: one POST to the same Worker, no invite code
