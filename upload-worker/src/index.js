@@ -171,6 +171,37 @@ async function notify(env, m, count, bytes) {
   await env.MAILER.send(new EmailMessage(env.MAIL_FROM, env.MAIL_TO, raw));
 }
 
+// Hourly: an incoming set with no _done marker and no new file for STALL_HOURS (default 12) gets one email to Mark.
+// (Alistair's first uploads stalled more than once; a browser left running while someone is at work can pause for hours.)
+// _stalled holds the last-file time already reported, so a set that resumes and stalls again is reported again.
+async function stalledUploads(env) {
+  const limit = (env.STALL_HOURS !== undefined ? Number(env.STALL_HOURS) : 12) * 36e5, now = Date.now(), sets = {};
+  for (const o of await listAll(env.BUCKET, '')) {
+    const [set, name] = o.key.split('/');
+    if (set.startsWith('_') || !name) continue;
+    const s = (sets[set] ??= { files: 0, bytes: 0, last: 0, done: false, noted: null });
+    const t = o.uploaded.getTime();
+    if (name === '_done') s.done = true;
+    else if (name === '_stalled') s.noted = o;
+    else if (name === '_meta.json') s.last = Math.max(s.last, t);
+    else { s.files++; s.bytes += o.size; s.last = Math.max(s.last, t); }
+  }
+  for (const [set, s] of Object.entries(sets)) {
+    if (s.done || !s.last || now - s.last < limit) continue;
+    const lastIso = new Date(s.last).toISOString();
+    if (s.noted && (await (await env.BUCKET.get(`${set}/_stalled`)).text()) === lastIso) continue;
+    const m = (await meta(env, set)) || {};
+    const hrs = Math.round((now - s.last) / 36e5);
+    await tellMark(env, `Upload stalled: ${m.name || set}, ${m.target || ''}`.trim(), [
+      `${m.name || '?'} <${m.email || '?'}> started sending ${m.target || 'frames'} (${m.scope || '?'}) on ${m.started || '?'}, but nothing new has arrived for ${hrs} hours.`, ``,
+      `Arrived so far: ${s.files} of ${m.files ?? '?'} files, ${(s.bytes / 1e9).toFixed(2)} of ${m.bytes ? (m.bytes / 1e9).toFixed(2) : '?'} GB.`,
+      `Last file: ${new Date(s.last).toUTCString()}`, `Set: ${set}`, ``,
+      `To carry on, they just open the upload page again, use the same name and target, and pick the same files:`,
+      `the ones already here are skipped. The desktop collects the set once it's finished.`]);
+    await env.BUCKET.put(`${set}/_stalled`, lastIso);
+  }
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url), p = url.pathname, q = url.searchParams;
@@ -185,7 +216,7 @@ export default {
           if (set.startsWith('_')) continue;          // _config, _requests
           (sets[set] ??= { set, files: [], bytes: 0, done: false });
           if (o.key.endsWith('/_done')) sets[set].done = true;
-          else if (!o.key.endsWith('/_meta.json')) { sets[set].files.push({ key: o.key, size: o.size, uploaded: o.uploaded }); sets[set].bytes += o.size; }
+          else if (!o.key.split('/')[1].startsWith('_')) { /* skips _meta.json, _stalled */ sets[set].files.push({ key: o.key, size: o.size, uploaded: o.uploaded }); sets[set].bytes += o.size; }
         }
         for (const s of Object.values(sets)) s.meta = await meta(env, s.set);
         return json(req, Object.values(sets));
@@ -378,8 +409,9 @@ export default {
     return json(req, { error: 'unknown' }, 404);
   },
 
-  // daily (see [triggers] in wrangler.toml): the outbox clean-up rules described at the top
+  // see [triggers] in wrangler.toml: hourly = stalled-upload check, daily 06:00 = the outbox clean-up rules described at the top
   async scheduled(event, env) {
+    if (event.cron !== '0 6 * * *') return stalledUploads(env);
     const now = Date.now();
     const ids = [...new Set((await listAll(env.BUCKET, '_outbox/')).map((o) => o.key.split('/')[1]))];
     for (const id of ids) {

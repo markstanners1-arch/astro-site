@@ -7,9 +7,9 @@ compatibility_date = "2026-10-01"
 workers_dev = false
 routes = [ { pattern = "upload.oneoffx.uk", custom_domain = true } ]
 
-# daily outbox clean-up (scheduled() in src/index.js), 06:00 UTC
+# scheduled() in src/index.js: daily outbox clean-up at 06:00 UTC; hourly check for stalled incoming uploads
 [triggers]
-crons = [ "0 6 * * *" ]
+crons = [ "0 6 * * *", "17 * * * *" ]
 
 [[r2_buckets]]
 binding = "BUCKET"
