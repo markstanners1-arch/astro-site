@@ -92,18 +92,42 @@ function reviewBlock(j) {
   if (!j.review || !j.review.length) return '';
   const pic = (file, label) => `<figure><a href="/d/${j.job}/${encodeURIComponent(file)}?view=1" target="_blank" rel="noopener">` +
     `<img src="/d/${j.job}/${encodeURIComponent(file)}?view=1" alt="${esc(label)}" loading="lazy"></a><figcaption>${esc(label)}</figcaption></figure>`;
+  // fine-tune sliders (any picture) and a blend between two versions: previewed live with CSS, sent with the choice so
+  // Mark can repeat them at full size (D:\NINA\apply_tune.py)
+  const tunable = (file, label) => `<div class="tv" data-label="${esc(label)}">${pic(file, label)}<details><summary>Fine-tune</summary>` +
+    ['b|Brightness|darker|brighter', 'k|Colour|muted|vivid', 'c|Contrast|softer|punchier'].map((s) => { const [k, n, lo, hi] = s.split('|');
+      return `<label class="sl"><span>${n}</span><small>${lo}</small><input type="range" min="60" max="140" value="100" data-k="${k}"><small>${hi}</small></label>`; }).join('') +
+    `<button type="button" class="rs">Reset</button></details></div>`;
+  const blend = j.review.length > 1 ? `<h2>Or blend two versions</h2><p class="n">Pick two and slide between them.</p>
+<div class="bl"><select id="ba">${j.review.map((r, i) => `<option value="${i}"${i === 0 ? ' selected' : ''}>${esc(r.label)}</option>`).join('')}</select>
+<select id="bb">${j.review.map((r, i) => `<option value="${i}"${i === 1 ? ' selected' : ''}>${esc(r.label)}</option>`).join('')}</select>
+<div class="stack"><img id="ia" alt=""><img id="ib" alt=""></div>
+<label class="sl"><small>first</small><input type="range" id="bm" min="0" max="100" value="50"><small>second</small></label>
+<label class="opt"><input type="checkbox" id="buse"> I'd like this blend as a full-size file too</label></div>` : '';
   const before = j.before ? `<p class="n">Before: your telescope app's own picture.</p><div class="g one">${pic(j.before, 'As stacked by the app')}</div>` : '';
   const opts = j.review.map((r) => `<label class="opt"><input type="checkbox" name="choice" value="${esc(r.label)}"> ${esc(r.label)}</label>`).join('')
     + `<label class="opt all"><input type="checkbox" id="all"> All of them</label>`;
-  const done = j.feedback ? `<p class="ok">Thanks: you picked <b>${esc([].concat(j.feedback.choice).join(', '))}</b>. Mark has your note and will send the full-size files.</p>` : '';
-  return `${before}<h2>Pick your favourites</h2><p class="n">Click a picture to see it larger.</p><div class="g">${j.review.map((r) => pic(r.file, r.label)).join('')}</div>
-${done}<form id="pick"${j.feedback ? ' hidden' : ''}><fieldset><legend>Tick the ones you'd like as full-size files (as many as you like)</legend>${opts}</fieldset>
+  const done = j.feedback ? `<p class="ok">Thanks: you picked <b>${esc([...[].concat(j.feedback.choice), ...(j.feedback.blend ? ['a blend'] : [])].join(', '))}</b>. Mark has your note and will send the full-size files.</p>` : '';
+  const files = JSON.stringify(j.review.map((r) => `/d/${j.job}/${encodeURIComponent(r.file)}?view=1`)).replace(/</g, '\\u003c');
+  return `${before}<h2>Pick your favourites</h2><p class="n">Click a picture to see it larger. Open <b>Fine-tune</b> under any picture to adjust it; your settings are sent with your choice.</p><div class="g">${j.review.map((r) => tunable(r.file, r.label)).join('')}</div>
+${blend}${done}<form id="pick"${j.feedback ? ' hidden' : ''}><fieldset><legend>Tick the ones you'd like as full-size files (as many as you like)</legend>${opts}</fieldset>
 <label class="c">Anything you'd change? (brighter, less red, crop tighter…)<textarea name="comment" rows="3"></textarea></label>
 <button>Send my choices</button><p class="n" id="msg"></p></form>
-<script>const A=document.getElementById('all');A?.addEventListener('change',()=>document.querySelectorAll('input[name=choice]').forEach(x=>x.checked=A.checked));
-document.getElementById('pick')?.addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),m=document.getElementById('msg');if(!f.getAll('choice').length){m.textContent='Tick at least one.';return}
+<script>const FILES=${files};
+function css(t){return 'brightness('+t.b/100+') contrast('+t.c/100+') saturate('+(t.k/100)**1.6+')'}
+function val(box){const t={b:100,c:100,k:100};box.querySelectorAll('input[type=range]').forEach(i=>t[i.dataset.k]=+i.value);return t}
+document.querySelectorAll('.tv').forEach(box=>{const img=box.querySelector('img'),up=()=>{img.style.filter=css(val(box))};
+box.querySelectorAll('input[type=range]').forEach(i=>i.addEventListener('input',up));
+box.querySelector('.rs').addEventListener('click',()=>{box.querySelectorAll('input[type=range]').forEach(i=>i.value=100);up()})});
+function tunes(){const o={};document.querySelectorAll('.tv').forEach(box=>{const t=val(box);if(t.b!=100||t.c!=100||t.k!=100)o[box.dataset.label]=t});return o}
+const ba=document.getElementById('ba'),bb=document.getElementById('bb'),bm=document.getElementById('bm'),ia=document.getElementById('ia'),ib=document.getElementById('ib');
+function bl(){if(!ba)return;ia.src=FILES[ba.value];ib.src=FILES[bb.value];ib.style.opacity=bm.value/100}
+[ba,bb,bm].forEach(x=>x?.addEventListener('input',bl));bl();
+function blendPick(){const u=document.getElementById('buse');if(!u||!u.checked)return null;return{a:ba.options[ba.selectedIndex].text,b:bb.options[bb.selectedIndex].text,second:+bm.value}}
+const A=document.getElementById('all');A?.addEventListener('change',()=>document.querySelectorAll('input[name=choice]').forEach(x=>x.checked=A.checked));
+document.getElementById('pick')?.addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),m=document.getElementById('msg');if(!f.getAll('choice').length&&!blendPick()){m.textContent='Tick at least one.';return}
 m.textContent='Sending…';try{const r=await fetch(location.pathname.replace(/\\/$/,'')+'/choose',{method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({choice:f.getAll('choice'),comment:f.get('comment')})});if(!r.ok)throw 0;e.target.hidden=true;m.textContent='';
+body:JSON.stringify({choice:f.getAll('choice'),comment:f.get('comment'),tune:tunes(),blend:blendPick()})});if(!r.ok)throw 0;e.target.hidden=true;m.textContent='';
 e.target.insertAdjacentHTML('afterend','<p class="ok">Thanks: Mark has your choices and will send the full-size files.</p>')}catch{m.textContent='That didn\\'t send. Please try again.'}})</script>`;
 }
 function downloadPage(j, files) {
@@ -122,7 +146,13 @@ h1{font:400 1.9rem/1.2 Georgia,serif;margin:0 0 6px}.e{font:500 .75rem ui-monosp
 ul{list-style:none;padding:0;margin:24px 0;display:grid;gap:10px}li{display:flex;justify-content:space-between;gap:12px;background:#121a27;border:1px solid #243046;border-radius:8px;padding:14px 16px}
 a{color:#e6e9ef;font-weight:600;text-decoration-color:#e0664d;overflow-wrap:anywhere}span,.n{color:#95a0b4;font-size:.9rem}
 main{max-width:960px}h2{font:400 1.4rem Georgia,serif;margin:32px 0 8px}.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:16px;margin:12px 0}
-.g.one{grid-template-columns:minmax(0,420px)}figure{margin:0}figure img{width:100%;border-radius:6px;display:block;background:#000}figcaption{color:#95a0b4;font-size:.9rem;margin-top:6px}
+.g.one{grid-template-columns:minmax(0,420px)}details{margin-top:6px;background:#121a27;border:1px solid #243046;border-radius:8px;padding:6px 10px}
+summary{cursor:pointer;color:#95a0b4;font-size:.9rem}.sl{display:grid;grid-template-columns:5.5em auto 1fr auto;align-items:center;gap:6px;margin:8px 0;font-size:.9rem}
+.sl small{color:#95a0b4;font-size:.75rem}.sl input{width:100%;accent-color:#e0664d}.bl .sl{grid-template-columns:auto 1fr auto}
+.rs{background:none;border:1px solid #243046;color:#95a0b4;border-radius:6px;padding:2px 10px;cursor:pointer}
+.bl select{background:#121a27;color:#e6e9ef;border:1px solid #243046;border-radius:6px;padding:6px;margin:0 8px 8px 0;max-width:100%}
+.stack{position:relative;max-width:640px}.stack img{width:100%;display:block;border-radius:6px}.stack #ib{position:absolute;inset:0}
+figure{margin:0}figure img{width:100%;border-radius:6px;display:block;background:#000}figcaption{color:#95a0b4;font-size:.9rem;margin-top:6px}
 form{background:#121a27;border:1px solid #e0664d;border-radius:8px;padding:18px;display:grid;gap:12px;margin-top:16px}fieldset{border:0;padding:0;margin:0;display:grid;gap:6px}
 legend{font-weight:600;margin-bottom:6px}.opt{display:flex;gap:8px;align-items:center}.c{display:grid;gap:6px;color:#95a0b4;font-size:.9rem}
 textarea{font:inherit;color:#e6e9ef;background:#0b1019;border:1px solid #243046;border-radius:6px;padding:8px}button{justify-self:start;padding:11px 20px;border:0;border-radius:999px;background:#e0664d;color:#fff;font:600 .95rem system-ui,sans-serif;cursor:pointer}
@@ -225,10 +255,21 @@ export default {
       // any number of versions can be chosen; each comes back as a full-size file
       const choice = [].concat(b?.choice || []).map((x) => clean(x, 80)).filter((x) => j.review.some((r) => r.label === x));
       const comment = String(b?.comment || '').slice(0, 1500);
-      if (!choice.length) return json(req, { error: 'pick at least one' }, 400);
-      j.feedback = { choice, comment, at: new Date().toISOString() };
+      // slider settings: percentages 60-140 per chosen picture, and an optional blend of two versions
+      const pct = (v) => Math.min(140, Math.max(60, Math.round(Number(v) || 100)));
+      const tune = {};
+      for (const [label, t] of Object.entries(b?.tune || {}).slice(0, 8))
+        if (j.review.some((r) => r.label === label)) tune[label] = { b: pct(t?.b), c: pct(t?.c), k: pct(t?.k) };
+      let blend = null;
+      if (b?.blend && j.review.some((r) => r.label === b.blend.a) && j.review.some((r) => r.label === b.blend.b))
+        blend = { a: clean(b.blend.a, 80), b: clean(b.blend.b, 80), second: Math.min(100, Math.max(0, Math.round(Number(b.blend.second) || 0))) };
+      if (!choice.length && !blend) return json(req, { error: 'pick at least one' }, 400);
+      j.feedback = { choice, comment, tune, blend, at: new Date().toISOString() };
       await putJob(env, j);
-      await tellMark(env, `${j.client} picked ${choice.length === j.review.length ? 'all of them' : choice.join(', ')} (${j.title})`, [`${j.client} chose: ${choice.join(', ')} for ${j.title}.`, ``, comment ? `Their note: ${comment}` : '(no note)', ``,
+      const tl = Object.entries(tune).map(([l, t]) => `  ${l}: brightness ${t.b}%, colour ${t.k}%, contrast ${t.c}%`);
+      const picked = [...choice, ...(blend ? [`a blend (${100 - blend.second}% ${blend.a} + ${blend.second}% ${blend.b})`] : [])];
+      await tellMark(env, `${j.client} picked ${choice.length === j.review.length && !blend ? 'all of them' : picked.join(', ')} (${j.title})`, [`${j.client} chose: ${picked.join(', ')} for ${j.title}.`, ``,
+        ...(tl.length ? ['Fine-tune settings:', ...tl, ''] : []), comment ? `Their note: ${comment}` : '(no note)', ``,
         `Their page: https://upload.oneoffx.uk/d/${j.job}`]);
       return json(req, { ok: true });
     }
