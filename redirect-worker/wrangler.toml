@@ -1,0 +1,11 @@
+# Redirects the other Gosforth Skies addresses to gosforthskies.co.uk (deploy: npx wrangler deploy, from this folder).
+# astro.oneoffx.uk was the site's address until 23 Oct 2026 (its old GitHub Pages DNS record was removed for this).
+name = "gosforth-redirect"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = false
+routes = [
+  { pattern = "gosforthskies.com", custom_domain = true },
+  { pattern = "www.gosforthskies.com", custom_domain = true },
+  { pattern = "astro.oneoffx.uk", custom_domain = true },
+]
