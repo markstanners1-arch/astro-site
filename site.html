@@ -98,6 +98,11 @@ figcaption span { color: var(--dim); font-size: 0.85rem; }
 .print .noimg { display: grid; place-items: center; color: var(--dim); font: 400 0.8rem var(--font-data); border: 1px dashed var(--rule); background: var(--deep); }
 .sizes { font: 500 0.78rem/1.4 var(--font-data) !important; letter-spacing: 0.06em; color: var(--ha) !important; }
 .onreq { font: 400 0.75rem/1.4 var(--font-data) !important; color: var(--dim) !important; }
+/* colour-version buttons under a print that comes in two palettes */
+.vers { display: flex; gap: 6px; flex-wrap: wrap; margin-top: -2px; }
+.vers button { font: 500 0.72rem/1 var(--font-data); letter-spacing: 0.04em; padding: 7px 11px; border-radius: 999px; border: 1px solid var(--rule); background: var(--deep); color: var(--dim); cursor: pointer; }
+.vers button[aria-pressed="true"] { border-color: var(--ha); color: var(--ink); }
+.vers button:hover { color: var(--ink); }
 .media { margin-top: 36px; display: grid; gap: 8px; max-width: 760px; }
 .media .note { margin-top: 0; }
 
@@ -293,10 +298,12 @@ html { scroll-behavior: smooth; }
       </figure>
       <figure class="print">
         <img src="img/tl_ngc6188.jpg" alt="Fighting Dragons of Ara, NGC 6188" loading="lazy">
+        <div class="vers" role="group" aria-label="Colour version"><button type="button" aria-pressed="true" data-src="img/tl_ngc6188.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ngc6188_gold.jpg">Gold &amp; blue</button></div>
         <figcaption><b>Fighting Dragons of Ara, NGC 6188</b><span>7 h 40 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes">A4 £25 · A3 £45 · A2 £80 · A1 £150</span></figcaption>
       </figure>
       <figure class="print">
         <img src="img/tl_ic2944.jpg" alt="Running Chicken, IC 2944" loading="lazy">
+        <div class="vers" role="group" aria-label="Colour version"><button type="button" aria-pressed="true" data-src="img/tl_ic2944.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic2944_gold.jpg">Gold &amp; blue</button></div>
         <figcaption><b>Running Chicken, IC 2944</b><span>6 h 30 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes">A4 £25 · A3 £45 · A2 £80 · A1 £150</span></figcaption>
       </figure>
       <figure class="print">
@@ -317,14 +324,17 @@ html { scroll-behavior: smooth; }
       </figure>
       <figure class="print">
         <img src="img/tl_ic1848_wide.jpg" alt="Heart and Soul, wide field (IC 1805 and IC 1848)" loading="lazy">
+        <div class="vers" role="group" aria-label="Colour version"><button type="button" aria-pressed="true" data-src="img/tl_ic1848_wide.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic1848_wide_gold.jpg">Gold &amp; blue</button></div>
         <figcaption><b>Heart and Soul, wide field (IC 1805 and IC 1848)</b><span>21 h 50 min · in red and teal or gold and blue · with the rare planetary nebula Sh2-200 in the top corner</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes">A4 £25 · A3 £45 · A2 £80 · A1 £150</span></figcaption>
       </figure>
       <figure class="print">
         <img src="img/tl_ic1848_heart_soul.jpg" alt="Heart and Soul, Telescope Live" loading="lazy">
+        <div class="vers" role="group" aria-label="Colour version"><button type="button" aria-pressed="true" data-src="img/tl_ic1848_heart_soul.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic1848_heart_soul_gold.jpg">Gold &amp; blue</button></div>
         <figcaption><b>Heart and Soul, Telescope Live</b><span>21 h 50 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes">A4 £25 · A3 £45 · A2 £80</span><span class="onreq">A1 on request</span></figcaption>
       </figure>
       <figure class="print">
         <img src="img/tl_ic1848_soul.jpg" alt="Soul Nebula, IC 1848" loading="lazy">
+        <div class="vers" role="group" aria-label="Colour version"><button type="button" aria-pressed="true" data-src="img/tl_ic1848_soul.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic1848_soul_gold.jpg">Gold &amp; blue</button></div>
         <figcaption><b>Soul Nebula, IC 1848</b><span>21 h 50 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes">A4 £25 · A3 £45</span></figcaption>
       </figure>
       <figure class="print">
@@ -593,6 +603,16 @@ document.querySelectorAll('.ba').forEach(function (box) {
   var input = box.querySelector('input');
   var set = function () { box.style.setProperty('--pos', input.value + '%'); };
   input.addEventListener('input', set); set();
+});
+// prints in two colour versions: the buttons swap the picture above them
+document.querySelectorAll('.print .vers').forEach(function (group) {
+  var img = group.parentNode.querySelector('img');
+  group.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      img.src = b.getAttribute('data-src');
+      group.querySelectorAll('button').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+    });
+  });
 });
 // contact address built in the browser so it never appears whole in the page source (light protection from scrapers);
 // without JavaScript the "skies at gosforthskies dot co dot uk" text stays as written

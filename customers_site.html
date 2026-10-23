@@ -98,6 +98,11 @@ figcaption span { color: var(--dim); font-size: 0.85rem; }
 .print .noimg { display: grid; place-items: center; color: var(--dim); font: 400 0.8rem var(--font-data); border: 1px dashed var(--rule); background: var(--deep); }
 .sizes { font: 500 0.78rem/1.4 var(--font-data) !important; letter-spacing: 0.06em; color: var(--ha) !important; }
 .onreq { font: 400 0.75rem/1.4 var(--font-data) !important; color: var(--dim) !important; }
+/* colour-version buttons under a print that comes in two palettes */
+.vers { display: flex; gap: 6px; flex-wrap: wrap; margin-top: -2px; }
+.vers button { font: 500 0.72rem/1 var(--font-data); letter-spacing: 0.04em; padding: 7px 11px; border-radius: 999px; border: 1px solid var(--rule); background: var(--deep); color: var(--dim); cursor: pointer; }
+.vers button[aria-pressed="true"] { border-color: var(--ha); color: var(--ink); }
+.vers button:hover { color: var(--ink); }
 .media { margin-top: 36px; display: grid; gap: 8px; max-width: 760px; }
 .media .note { margin-top: 0; }
 
@@ -285,6 +290,16 @@ document.querySelectorAll('.ba').forEach(function (box) {
   var input = box.querySelector('input');
   var set = function () { box.style.setProperty('--pos', input.value + '%'); };
   input.addEventListener('input', set); set();
+});
+// prints in two colour versions: the buttons swap the picture above them
+document.querySelectorAll('.print .vers').forEach(function (group) {
+  var img = group.parentNode.querySelector('img');
+  group.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      img.src = b.getAttribute('data-src');
+      group.querySelectorAll('button').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+    });
+  });
 });
 // contact address built in the browser so it never appears whole in the page source (light protection from scrapers);
 // without JavaScript the "skies at gosforthskies dot co dot uk" text stays as written

@@ -8,6 +8,8 @@
 #   Credit comes from the source column: "own, <scope>", "Telescope Live ...", or "mixed".
 #   note replaces the integration/nights line when present.
 #   Rows with no web_image get a text-only card. Rows with show = no are left out (blank or yes = shown).
+#   alt_image (optional): a second colour version of the same picture; two buttons under it let visitors swap.
+#   alt_labels (optional): the two button names, "first|second" (default "Red & teal|Gold & blue").
 import csv, html, re
 from pathlib import Path
 
@@ -49,6 +51,12 @@ def card(r):
     img = r['web_image'].strip()
     pic = (f'<img src="img/{e(img)}" alt="{e(r["title"])}" loading="lazy">' if img
            else '<div class="noimg">Image to follow</div>')
+    alt = (r.get('alt_image') or '').strip()
+    if img and alt:   # a second colour version: buttons under the picture swap it (script at the end of site.html)
+        a, b = ((r.get('alt_labels') or '').strip() or 'Red & teal|Gold & blue').split('|')
+        pic += ('\n        <div class="vers" role="group" aria-label="Colour version">'
+                f'<button type="button" aria-pressed="true" data-src="img/{e(img)}">{e(a)}</button>'
+                f'<button type="button" aria-pressed="false" data-src="img/{e(alt)}">{e(b)}</button></div>')
     sizes = []
     if offered: sizes.append('<span class="sizes">' + ' · '.join(offered) + '</span>')
     if on_request: sizes.append('<span class="onreq">' + ' · '.join(on_request) + ' on request</span>')
