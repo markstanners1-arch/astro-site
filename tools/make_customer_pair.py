@@ -22,18 +22,42 @@ ap.add_argument('before'); ap.add_argument('after'); ap.add_argument('name')
 ap.add_argument('--crop'); ap.add_argument('--rotate', action='store_true')
 a = ap.parse_args()
 aft = load(a.after); bef = load(a.before)
+
+def crop_match(bef, aft):
+    """Fallback when star matching fails (nebula-filled frames): the finished picture is usually a crop of the same
+    stack as the plain stretch, at the same scale, maybe turned by a quarter-turn. Find it by matching fine detail."""
+    hp = lambda im: (lambda g: g - cv2.GaussianBlur(g, (0, 0), 3))(cv2.cvtColor(im, cv2.COLOR_RGB2GRAY).astype(np.float32))
+    s = 0.5 if max(bef.shape) > 3000 else 1.0                # half size keeps it quick on big stacks
+    small = lambda im: cv2.resize(im, None, fx=s, fy=s, interpolation=cv2.INTER_AREA)
+    B = hp(small(bef)); best = (-1, 0, None)
+    for k in range(4):                                       # quarter-turns of the finished picture
+        A = hp(small(np.ascontiguousarray(np.rot90(aft, k))))
+        if A.shape[0] > B.shape[0] or A.shape[1] > B.shape[1]: continue
+        r = cv2.matchTemplate(B, A, cv2.TM_CCOEFF_NORMED); _, v, _, loc = cv2.minMaxLoc(r)
+        if v > best[0]: best = (v, k, loc)
+    v, k, (x, y) = best
+    if v < 0.3: return None
+    h, w = np.rot90(aft, k).shape[:2]; x, y = round(x / s), round(y / s)
+    print(f'  matched as a crop of the stack (score {v:.2f}, quarter-turns {k})')
+    return np.rot90(bef[y:y + h, x:x + w], -k)              # undo the turn so it lines up with the finished picture
+
+T = None
 for sigma, pts in ((5, 60), (3, 100), (8, 40), (2, 150)):     # the app's stack and the finished picture differ a lot,
     try:                                                     # so try a few star-detection levels
         T, (src, dst) = aa.find_transform(bef.mean(2).astype(np.float32), aft.mean(2).astype(np.float32),
                                           max_control_points=pts, detection_sigma=sigma)
         break
-    except aa.MaxIterError:
-        print('  no match at detection level', sigma)
-else:
-    raise SystemExit('Could not match the star patterns: check both pictures show the same field.')
-print('  stars matched', len(src), 'rotation %.2f deg, scale %.4f' % (np.degrees(T.rotation), T.scale))
+    except (aa.MaxIterError, TypeError, Exception) as err:    # TypeError: too much nebula for the star finder
+        print('  no star match at detection level', sigma)
 size = (aft.shape[1], aft.shape[0])
-bef = cv2.warpAffine(bef, T.params[:2], size)
+if T is not None:
+    print('  stars matched', len(src), 'rotation %.2f deg, scale %.4f' % (np.degrees(T.rotation), T.scale))
+    bef = cv2.warpAffine(bef, T.params[:2], size)
+else:
+    bef = crop_match(bef, aft)
+    if bef is None:
+        raise SystemExit('Could not line the pictures up: check both show the same field.')
+    if not a.crop: a.crop = f'0,{size[1]},0,{size[0]}'   # an exact crop of the stack: use the whole finished picture
 if a.crop:
     y0, y1, x0, x1 = map(int, a.crop.split(','))
 else:
