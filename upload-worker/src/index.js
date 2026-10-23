@@ -31,10 +31,12 @@ const QUOTA = 20e9;                          // R2 bills average storage (10 GB-
 const MAX_FILE = 95e6;                       // a Worker request body can be up to 100 MB on the free plan: bigger files use /mpu
 const MAX_BIG = 2e9;                         // largest single frame accepted in parts (61 MP cameras are about 120 MB)
 const OK_EXT = /\.(fit|fits|fts|xisf)$/i;
-const SITE = 'https://astro.oneoffx.uk';
+// the site moved to gosforthskies.co.uk on 23 Oct 2026; the old address stays allowed while it redirects
+const SITES = ['https://gosforthskies.co.uk', 'https://www.gosforthskies.co.uk', 'https://astro.oneoffx.uk'];
 
-const cors = () => ({
-  'Access-Control-Allow-Origin': SITE,
+const cors = (req) => ({
+  'Access-Control-Allow-Origin': SITES.includes(req?.headers.get('Origin')) ? req.headers.get('Origin') : SITES[0],
+  'Vary': 'Origin',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, X-Invite, Authorization',
   'Access-Control-Max-Age': '86400',
