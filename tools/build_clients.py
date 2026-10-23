@@ -50,7 +50,7 @@ def entry(r, i):
              if get('quote') else '')
     return f'''      <div class="pair{' flip' if i % 2 else ''}">
         <div class="ba" style="--pos:50%">
-          {img(get('before_image'), name + ', ' + left.lower())}
+          {img(get('before_image'), name + ', ' + (left.lower() if left == 'Plain stretch' else left))}
           <div class="after">{img(get('after_image'), name + ', processed')}</div>
           <div class="handle"></div>
           <span class="tag l">{e(left)}</span><span class="tag r">Processed</span>
