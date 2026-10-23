@@ -1,1 +1,2 @@
-client,title,web_image,scope,integration,show
+show,title,catalogue,customer,before_image,after_image,before_label,scope,filters,integration,nights,notes,quote
+yes,Rosette Nebula,NGC 2237,Dark Auditor,c_rosette_before.jpg,c_rosette_after.jpg,Seestar app,Seestar S50,LP (dual-band) filter,"1,963 × 10 s, 5.5 h","3 nights, 20–22 Oct 2026, South Africa","Three nights combined. Every frame was checked, and 346 hit by cloud or the dawn sky were left out. The Seestar turns its frame as the sky rotates, so the nights were aligned and trimmed to the area they share. The light-pollution gradient was removed, and the hydrogen and oxygen signals mapped to gold and blue, with gentle sharpening.","You've definitely brought out more of the fainter features."

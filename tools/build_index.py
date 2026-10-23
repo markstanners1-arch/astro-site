@@ -1,12 +1,12 @@
-# Wraps site.html (the page body, also used for the private Claude preview) into a standalone index.html for
+# Wraps site.html (the home page body, also used for the private Claude preview) into a standalone index.html for
 # GitHub Pages: adds the document skeleton, charset/viewport and the small reset the preview viewer supplies.
-# Run after every edit to site.html:  python tools/build_index.py
+# Does the same for the Customer work page: customers_site.html (built from data/client_work.csv) -> customers.html.
+# Run after every edit to site.html or the CSVs:  python tools/build_index.py
 from pathlib import Path
-import build_prints, build_clients               # regenerate PRINTS and CLIENT WORK from their CSVs first
+import build_prints, build_clients               # regenerate PRINTS in site.html, then the customer work page body
 build_prints.build()
 build_clients.build()
 root = Path(__file__).resolve().parent.parent
-body = (root / 'site.html').read_text(encoding='utf8')
 head = '''<!doctype html>
 <html lang="en-GB">
 <head>
@@ -20,8 +20,10 @@ img { max-width: 100%; }
 [hidden] { display: none !important; }
 </style>
 '''
-# the page's own <title>, metas, font links and <style> come first in site.html and belong in <head>
-split = body.index('<div class="wrap">')
-html = head + body[:split] + '</head>\n<body>\n' + body[split:] + '\n</body>\n</html>\n'
-(root / 'index.html').write_text(html, encoding='utf8')
-print('wrote', root / 'index.html', len(html), 'bytes')
+for src, out in (('site.html', 'index.html'), ('customers_site.html', 'customers.html')):
+    body = (root / src).read_text(encoding='utf8')
+    # the page's own <title>, metas, font links and <style> come first and belong in <head>
+    split = body.index('<div class="wrap">')
+    html = head + body[:split] + '</head>\n<body>\n' + body[split:] + '\n</body>\n</html>\n'
+    (root / out).write_text(html, encoding='utf8')
+    print('wrote', root / out, len(html), 'bytes')
