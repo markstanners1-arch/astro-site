@@ -143,8 +143,9 @@ figcaption span { color: var(--dim); font-size: 0.85rem; }
 code { font: 400 0.88em var(--font-data); background: var(--deep); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
 
 /* pricing */
-.price { margin-top: 32px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-@media (max-width: 820px) { .price { grid-template-columns: minmax(0, 1fr); } }
+.price { margin-top: 32px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .price { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .price { grid-template-columns: minmax(0, 1fr); } }
 .tier { background: var(--deep); border: 1px solid var(--rule); border-radius: 8px; padding: 22px; display: grid; gap: 10px; align-content: start; }
 .tier.pilot { border-color: var(--ha); }
 .tier .amt { font: 400 2rem/1 var(--font-display); }
@@ -566,25 +567,32 @@ html { scroll-behavior: smooth; }
 <section id="prices">
   <div class="wrap">
     <p class="eyebrow">Prices</p>
-    <h2>Starting with a <em>pilot</em></h2>
+    <h2>One price per <em>target</em></h2>
     <div class="price">
-      <div class="tier pilot">
-        <p class="eyebrow">Now</p>
-        <div class="amt">Free <small>pilot</small></div>
-        <ul><li>A handful of datasets from friends, the local society and the Draco group</li><li>In return: feedback, and permission to show the result here</li></ul>
+      <div class="tier">
+        <p class="eyebrow">Smart telescope</p>
+        <div class="amt">£30</div>
+        <ul><li>Seestar, Dwarf, Vespera and similar</li><li>One target, one night or several</li></ul>
       </div>
       <div class="tier">
-        <p class="eyebrow">Planned</p>
-        <div class="amt">£— <small>single target</small></div>
-        <ul><li>One night or several of the same object</li><li>TIFF and JPEG, one round of tweaks</li></ul>
+        <p class="eyebrow">Dedicated rig</p>
+        <div class="amt">£45</div>
+        <ul><li>Your telescope and astro camera, colour or mono</li><li>Broadband colour or LRGB</li></ul>
       </div>
       <div class="tier">
-        <p class="eyebrow">Planned</p>
-        <div class="amt">£— <small>narrowband or mosaic</small></div>
-        <ul><li>Dual-band or SHO colour palettes</li><li>Multi-panel mosaics joined and balanced</li></ul>
+        <p class="eyebrow">Narrowband</p>
+        <div class="amt">£55</div>
+        <ul><li>Hα, OIII, SII filters, mono or dual-band</li><li>Choice of palettes</li></ul>
+      </div>
+      <div class="tier">
+        <p class="eyebrow">Mosaic</p>
+        <div class="amt">from £75</div>
+        <ul><li>Several panels joined and balanced</li><li>Quoted once I've seen the data</li></ul>
       </div>
     </div>
-    <p class="note">Prices will be set once the pilot shows how long typical datasets take.</p>
+    <p class="note"><b>Every job includes:</b> a check of every frame, a night report on your data and kit, a review page with several versions to choose from, your chosen version as a full-size 16-bit TIFF and a JPEG, the linear master files for your own processing, and one round of tweaks.</p>
+    <p class="note"><b>Extra versions:</b> £5 each (another palette, starless, a different crop).</p>
+    <p class="note"><b>Paying:</b> you see your versions on the review page first, then pay to unlock the full-size files. Pilot users keep their free processing until launch.</p>
   </div>
 </section>
 

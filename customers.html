@@ -143,8 +143,9 @@ figcaption span { color: var(--dim); font-size: 0.85rem; }
 code { font: 400 0.88em var(--font-data); background: var(--deep); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
 
 /* pricing */
-.price { margin-top: 32px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-@media (max-width: 820px) { .price { grid-template-columns: minmax(0, 1fr); } }
+.price { margin-top: 32px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .price { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .price { grid-template-columns: minmax(0, 1fr); } }
 .tier { background: var(--deep); border: 1px solid var(--rule); border-radius: 8px; padding: 22px; display: grid; gap: 10px; align-content: start; }
 .tier.pilot { border-color: var(--ha); }
 .tier .amt { font: 400 2rem/1 var(--font-display); }
