@@ -30,15 +30,20 @@ def quick_stretch(a):                                       # what a plain scree
         out.append(((m-1)*x)/((2*m-1)*x-m))
     return (np.clip(np.stack(out, -1), 0, 1)*255).astype(np.uint8)
 
-# M 31: Seestar app stack (16 Oct) -> hybrid final, cropped around the galaxy, landscape
+# M 31: plain stretch of the all-nights Seestar stack -> hybrid final of the same stack (plus its Ha layer), cropped
+# around the galaxy, landscape. 23 Oct: the before was the app's one-night stack, an unfair comparison. The stack lives
+# on the exFAT archive drive (E: when plugged in, see D:\NINA\DRIVES.md).
 print('M31'); aft = load('D:/Brampton_Oct7-8_work/M31_hybrid/M31_hybrid_Ha.jpg')
-bef = align(load('D:/Acombe Farm 16th Oct/M 31/Stacked_221_M 31_30.0s_IRCUT_20261016-215747.jpg'), aft)
+bef = quick_stretch(rd_xisf('E:/Astro archive/M31_seestar_all/processing/02_colour_calibrated_linear.xisf'))
+assert bef.shape == aft.shape, (bef.shape, aft.shape)
 y0, y1, x0, x1 = 300, 3500, 150, 2030
 save(bef[y0:y1, x0:x1], 'm31_before.jpg', rot=True); save(aft[y0:y1, x0:x1], 'm31_after.jpg', rot=True)
 
-# Pleiades: Seestar app stack (16 Oct) -> 58-minute hybrid
+# Pleiades: plain stretch of the 58-minute two-night stack -> hybrid of the same stack (23 Oct: the before was the
+# app's one-night stack, which made the comparison unfair; now both sides are the same data)
 print('M45'); aft = load('D:/Brampton_Oct7-8_work/M45_hybrid/processing/M45_hybrid.jpg')
-bef = align(load('D:/Acombe Farm 16th Oct/M 45/Stacked_38_M 45_60.0s_IRCUT_20261016-224945.jpg'), aft)
+bef = quick_stretch(rd_xisf('D:/Brampton_Oct7-8_work/M45_combined/processing/02_colour_calibrated_linear.xisf'))
+assert bef.shape == aft.shape, (bef.shape, aft.shape)
 y0, y1, x0, x1 = 1000, 3200, 150, 1950
 save(bef[y0:y1, x0:x1], 'm45_before.jpg'); save(aft[y0:y1, x0:x1], 'm45_after.jpg')
 
