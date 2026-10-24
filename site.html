@@ -112,7 +112,7 @@ figcaption span { color: var(--dim); font-size: 0.85rem; }
 .step { display: grid; gap: 10px; align-content: start; min-width: 0; }
 .step::before { counter-increment: step; content: counter(step); font: 400 2.6rem/1 var(--font-display); color: var(--ha); }
 .step p { color: var(--dim); }
-/* send your frames: the upload box (talks to the gosforth-upload Worker at upload.oneoffx.uk) */
+/* send your frames: the upload box (talks to the gosforth-upload Worker at upload.gosforthskies.co.uk) */
 .send { margin-top: 40px; background: var(--deep); border: 1px solid var(--ha); border-radius: 8px; padding: clamp(18px, 3vw, 28px); display: grid; gap: 16px; max-width: 760px; }
 .send .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
 @media (max-width: 560px) { .send .fields { grid-template-columns: minmax(0, 1fr); } }
@@ -417,7 +417,7 @@ html { scroll-behavior: smooth; }
 // retries failures, and skips files already sent if the same person sends the same target again the same day.
 (() => {
   // files up to SMALL go in one request; bigger ones (61 MP cameras, about 120 MB a frame) go in PART-sized pieces
-  const API = 'https://upload.oneoffx.uk', MAX = 2e9, SMALL = 90e6, PART = 50 * 1024 * 1024, form = document.getElementById('send');
+  const API = 'https://upload.gosforthskies.co.uk', MAX = 2e9, SMALL = 90e6, PART = 50 * 1024 * 1024, form = document.getElementById('send');
   const drop = document.getElementById('drop'), pick = document.getElementById('folder'), go = document.getElementById('go');
   const picked = document.getElementById('picked'), status = document.getElementById('status');
   const bar = form.querySelector('.bar'), fill = bar.firstElementChild;
@@ -539,7 +539,7 @@ html { scroll-behavior: smooth; }
     if (!d.name || !d.email || !d.object) return say('Please fill in your name, email and what you would like.', true);
     btn.disabled = true; say('Sending…');
     try {
-      const r = await fetch('https://upload.oneoffx.uk/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
+      const r = await fetch('https://upload.gosforthskies.co.uk/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || `Request service error ${r.status}`);
       form.reset(); say("Thanks, your request has reached Mark. He'll reply by email.");

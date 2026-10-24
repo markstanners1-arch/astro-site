@@ -5,7 +5,7 @@ name = "gosforth-upload"
 main = "src/index.js"
 compatibility_date = "2026-10-01"
 workers_dev = false
-routes = [ { pattern = "upload.oneoffx.uk", custom_domain = true } ]
+routes = [ { pattern = "upload.gosforthskies.co.uk", custom_domain = true }, { pattern = "upload.oneoffx.uk", custom_domain = true } ]   # old address kept: links already sent to clients use it
 
 # scheduled() in src/index.js: daily outbox clean-up at 06:00 UTC; hourly check for stalled incoming uploads
 [triggers]

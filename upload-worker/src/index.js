@@ -136,7 +136,7 @@ function downloadPage(j, files) {
   const mb = (n) => (n / 1e6).toFixed(n > 1e8 ? 0 : 1) + ' MB';
   const listed = files.filter((f) => !(j.review || []).some((r) => r.file === f.name) && f.name !== j.before);
   const rows = listed.map((f) => `<li><a href="/d/${j.job}/${encodeURIComponent(f.name)}">${esc(f.name)}</a><span>${mb(f.size)}</span></li>`).join('');
-  const body = j.cleared && j.moved && /^https:\/\/upload\.oneoffx\.uk\/d\/[\w-]+$/.test(j.moved)
+  const body = j.cleared && j.moved && /^https:\/\/upload\.(gosforthskies\.co\.uk|oneoffx\.uk)\/d\/[\w-]+$/.test(j.moved)
     ? `<p>This page has been updated. Your pictures are now here:</p><p><a href="${j.moved}">${esc(j.moved)}</a></p>`
     : j.cleared
     ? `<p>These files have been cleared. If you still need them, reply to Mark's email and he'll send them again.</p>`
@@ -303,7 +303,7 @@ export default {
       const picked = [...choice, ...(blend ? [`a blend (${100 - blend.second}% ${blend.a} + ${blend.second}% ${blend.b})`] : [])];
       await tellMark(env, `${j.client} picked ${choice.length === j.review.length && !blend ? 'all of them' : picked.join(', ')} (${j.title})`, [`${j.client} chose: ${picked.join(', ')} for ${j.title}.`, ``,
         ...(tl.length ? ['Fine-tune settings:', ...tl, ''] : []), comment ? `Their note: ${comment}` : '(no note)', ``,
-        `Their page: https://upload.oneoffx.uk/d/${j.job}`]);
+        `Their page: https://upload.gosforthskies.co.uk/d/${j.job}`]);
       return json(req, { ok: true });
     }
     if (p.startsWith('/d/') && req.method === 'GET') {
@@ -431,7 +431,7 @@ export default {
       } else if (!j.first_download && age > NUDGE_AFTER && !j.nudged) {
         j.nudged = true; await putJob(env, j);
         await tellMark(env, `Not downloaded yet: ${j.title} for ${j.client}`, [`${j.client} <${j.email}> hasn't opened their link after 7 days.`,
-          `Link: https://upload.oneoffx.uk/d/${j.job}`, ``, `It clears itself at 30 days (${new Date(Date.parse(j.created) + CLEAR_AFTER).toDateString()}). A nudge from you might help.`]);
+          `Link: https://upload.gosforthskies.co.uk/d/${j.job}`, ``, `It clears itself at 30 days (${new Date(Date.parse(j.created) + CLEAR_AFTER).toDateString()}). A nudge from you might help.`]);
       }
     }
   },
