@@ -3,9 +3,10 @@
 # Does the same for the Customer work page: customers_site.html (built from data/client_work.csv) -> customers.html.
 # Run after every edit to site.html or the CSVs:  python tools/build_index.py
 from pathlib import Path
-import build_prints, build_clients               # regenerate PRINTS in site.html, then the customer work page body
+import build_prints, build_clients, build_orion               # regenerate PRINTS in site.html, then the customer work page body
 build_prints.build()
 build_clients.build()
+build_orion.build()
 root = Path(__file__).resolve().parent.parent
 head = '''<!doctype html>
 <html lang="en-GB">
@@ -20,7 +21,7 @@ img { max-width: 100%; }
 [hidden] { display: none !important; }
 </style>
 '''
-for src, out in (('site.html', 'index.html'), ('customers_site.html', 'customers.html')):
+for src, out in (('site.html', 'index.html'), ('customers_site.html', 'customers.html'), ('orion_site.html', 'orion.html')):
     body = (root / src).read_text(encoding='utf8')
     # the page's own <title>, metas, font links and <style> come first and belong in <head>
     split = body.index('<div class="wrap">')
