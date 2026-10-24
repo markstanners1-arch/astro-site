@@ -27,7 +27,7 @@
 // Cloudflare only sends mail to verified addresses, so mail to clients goes out from Mark's Gmail, never from here.
 import { EmailMessage } from 'cloudflare:email';
 
-const QUOTA = 20e9;                          // R2 bills average storage (10 GB-months free); sets are collected every 30 min, so spikes cost ~nothing. Worst case full all month: about 12p
+const QUOTA = 50e9;                          // raised from 20 GB on 24 Oct 2026 (three overnight sets filled it). R2 bills average storage (10 GB-months free); sets are collected within hours, so spikes cost ~nothing. Worst case full all month: about 50p
 const MAX_FILE = 95e6;                       // a Worker request body can be up to 100 MB on the free plan: bigger files use /mpu
 const MAX_BIG = 2e9;                         // largest single frame accepted in parts (61 MP cameras are about 120 MB)
 const OK_EXT = /\.(fit|fits|fts|xisf)$/i;
