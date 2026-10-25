@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex">
 <style>
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 body { margin: 0; font-size: 14px; font-family: system-ui, sans-serif; }
@@ -143,8 +142,9 @@ figcaption span { color: var(--dim); font-size: 0.85rem; }
 code { font: 400 0.88em var(--font-data); background: var(--deep); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
 
 /* pricing */
-.price { margin-top: 32px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-@media (max-width: 820px) { .price { grid-template-columns: minmax(0, 1fr); } }
+.price { margin-top: 32px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .price { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .price { grid-template-columns: minmax(0, 1fr); } }
 .tier { background: var(--deep); border: 1px solid var(--rule); border-radius: 8px; padding: 22px; display: grid; gap: 10px; align-content: start; }
 .tier.pilot { border-color: var(--ha); }
 .tier .amt { font: 400 2rem/1 var(--font-display); }
@@ -295,7 +295,7 @@ html { scroll-behavior: smooth; }
     <p>Gosforth Skies · processing from Gosforth, Newcastle upon Tyne, under 55° N skies.</p>
     <p>Email: <span id="contact">skies at gosforthskies dot co dot uk</span></p>
     <p>More of my pictures on <a href="https://www.flickr.com/photos/gosforthskies/" rel="noopener">Flickr</a>.</p>
-    <p id="privacy"><b>Privacy.</b> If you send frames or a request, I keep your name and email to reply and deliver, and your frames only until 7 days after you download the result (30 days at most). Nothing is shared or sold, and your picture only appears here if you say yes. Ask me any time to see or delete what I hold. No cookies or tracking on this site.</p>
+    <p id="privacy"><b>Privacy.</b> I keep only what I need to process and deliver your pictures, frames are deleted soon after delivery, and nothing is shared or sold. No cookies or tracking. Details in the <a href="privacy.html">privacy policy</a> and <a href="terms.html">terms</a>.</p>
   </footer>
 </div>
 

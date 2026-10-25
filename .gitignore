@@ -2,3 +2,5 @@ Thumbs.db
 *.tmp
 __pycache__/
 .wrangler/
+payments_preview.html
+data/stripe_links_test.json

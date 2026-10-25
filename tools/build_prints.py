@@ -10,7 +10,12 @@
 #   Rows with no web_image get a text-only card. Rows with show = no are left out (blank or yes = shown).
 #   alt_image (optional): a second colour version of the same picture; two buttons under it let visitors swap.
 #   alt_labels (optional): the two button names, "first|second" (default "Red & teal|Gold & blue").
-import csv, html, re
+#
+# Stripe buy buttons (each size becomes a link to its Stripe Payment Link) and the "how payment works" notes appear only
+# when payment links exist: data/stripe_links_live.json (made by D:\NINA\stripe_pay.py prints with the live key) turns
+# them on for the real site. Test-mode links (data/stripe_links_test.json) are used only by a preview build:
+#   python tools/build_index.py --payments-preview   -> payments_preview.html (git-ignored, site.html untouched)
+import csv, html, json, re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -32,13 +37,31 @@ def credit(source):
         return 'Seestar data by Mark Stanners, combined with Telescope Live data'
     return ''
 
-def card(r):
+PAY_PRINTS = ('    <p class="note pay"><b>Buying a print.</b> Tap a size to pay securely through Stripe by card, Apple Pay or Google Pay; '
+              'your card details go to Stripe, never to me. There\'s a box at checkout for the optional legend wording. '
+              'I print each one to order and email you when it\'s posted. UK delivery for now; for anywhere else, '
+              'a size not listed, or acrylic and metal, email me.</p>\n')
+PAY_FAQ = ('      <details id="paying"><summary>How do I pay?</summary><p>Nothing up front. When your picture is ready, the delivery '
+           'email has the download link and a secure Stripe payment link for the agreed price (card, Apple Pay or Google Pay; '
+           'your card details go to Stripe, never to me). The download works straight away, so you see the result before you pay. '
+           'Prints are paid at checkout from the Prints section. Pilot datasets stay free.</p></details>\n')
+
+def load_links(preview=False):
+    """{'Title|A3': url} from the live links file, or the test one for a preview build; {} means no buttons"""
+    f = ROOT / 'data' / ('stripe_links_test.json' if preview else 'stripe_links_live.json')
+    if not f.exists(): return {}
+    return {k: v['url'] for k, v in json.loads(f.read_text(encoding='utf8'))['links'].items()}
+
+def card(r, links=None):
+    links = links or {}
     e = html.escape
     prices = PRICES.get(r['tier'].strip() or 'standard', PRICES['standard'])
     offered, on_request = [], []
     for s in SIZES:
         dpi = float(r[f'{s} dpi'] or 0)
-        if dpi >= OFFER_DPI and s in prices: offered.append(f'{s} £{prices[s]}')
+        if dpi >= OFFER_DPI and s in prices:
+            url = links.get(f"{r['title']}|{s}")
+            offered.append(f'<a class="buy" href="{e(url)}" rel="noopener">{s} £{prices[s]}</a>' if url else f'{s} £{prices[s]}')
         elif dpi >= REQUEST_DPI: on_request.append(s)
     lines = []
     if r['note'].strip(): lines.append(e(r['note'].strip()))
@@ -58,7 +81,7 @@ def card(r):
                 f'<button type="button" aria-pressed="true" data-src="img/{e(img)}">{e(a)}</button>'
                 f'<button type="button" aria-pressed="false" data-src="img/{e(alt)}">{e(b)}</button></div>')
     sizes = []
-    if offered: sizes.append('<span class="sizes">' + ' · '.join(offered) + '</span>')
+    if offered: sizes.append('<span class="sizes">' + (' ' if links else ' · ').join(offered) + '</span>')
     if on_request: sizes.append('<span class="onreq">' + ' · '.join(on_request) + ' on request</span>')
     return ('      <figure class="print">\n        ' + pic + '\n        <figcaption><b>' + e(r['title']) + '</b>'
             + ''.join(f'<span>{l}</span>' for l in lines)
@@ -72,17 +95,21 @@ def media_block(rows):
             f'      <p class="note">At A3: {html.escape(names("A3"))}.</p>\n'
             f'      <p class="note">At A2: {html.escape(names("A2"))}.</p>\n    </div>')
 
-def section(rows):
+def section(rows, links=None):
     return ('<section id="prints">\n  <div class="wrap">\n    <p class="eyebrow">Prints</p>\n'
             '    <h2>Pictures for the <em>wall</em></h2>\n'
             f'    <p class="lede" style="margin-top:14px">{html.escape(INTRO)}</p>\n'
-            '    <p class="eyebrow" style="margin-top:28px">Indicative prices during the pilot · unframed fine-art giclée</p>\n'
-            '    <div class="prints">\n' + '\n'.join(card(r) for r in rows) + '\n    </div>\n'
-            '    <p class="note">P&amp;P: £6 for A4 and A3 (sent flat), £9 for A2 and A1 (rolled in a tube).</p>\n'
+            '    <p class="eyebrow" style="margin-top:28px">'
+            + ('Prices · unframed fine-art giclée' if links else 'Indicative prices during the pilot · unframed fine-art giclée')
+            + '</p>\n'
+            '    <div class="prints">\n' + '\n'.join(card(r, links) for r in rows) + '\n    </div>\n'
+            + ('    <p class="note">Prices include UK postage.</p>\n' if links else
+               '    <p class="note">P&amp;P: £6 for A4 and A3 (sent flat), £9 for A2 and A1 (rolled in a tube).</p>\n') +
             '    <p class="note">Free on request: a small legend in the corner with the object\'s name and a line about it, and a '
             'signature. Nice for a gift; say if you\'d like your own wording or a name added.</p>\n'
             + media_block(rows) + '\n'
-            '    <p class="note">To order, email me with the picture, size and finish, and whether you\'d like the legend.</p>\n'
+            + (PAY_PRINTS if links else
+               '    <p class="note">To order, email me with the picture, size and finish, and whether you\'d like the legend.</p>\n')
             + REQUEST_FORM + '  </div>\n</section>')
 
 # "Not here? Ask for it": posts to the upload Worker's /request route (handled by the script at the end of site.html)
@@ -103,12 +130,27 @@ REQUEST_FORM = '''    <form class="send" id="ask" novalidate>
     </form>
 '''
 
-def build():
+BUY_CSS = ('.buy { color: inherit; text-decoration: none; border: 1px solid currentColor; border-radius: 4px; '
+           'padding: 1px 7px; margin: 2px 4px 2px 0; display: inline-block; }\n'
+           '.buy:hover, .buy:focus-visible { background: rgba(255,255,255,0.1); }\n')
+
+def render(preview=False):
+    """site.html text with the Prints section rebuilt (plus buy buttons and payment notes when payment links exist)"""
     rows = [r for r in csv.DictReader(open(ROOT / 'data' / 'print_sizes.csv', encoding='utf8'))
             if (r.get('show') or 'yes').strip().lower() != 'no']
+    links = load_links(preview)
     page = (ROOT / 'site.html').read_text(encoding='utf8')
-    new, n = re.subn(r'<section id="prints">.*?</section>', lambda m: section(rows), page, count=1, flags=re.S)
+    new, n = re.subn(r'<section id="prints">.*?</section>', lambda m: section(rows, links), page, count=1, flags=re.S)
     if n != 1: raise SystemExit('prints section not found in site.html')
+    new = re.sub(r'\n *<details id="paying">.*?</details>', '', new, flags=re.S)       # rebuilt fresh below
+    new = new.replace(BUY_CSS, '')
+    if links:
+        new = new.replace('<div class="faq">\n', '<div class="faq">\n' + PAY_FAQ, 1)
+        new = new.replace('.onreq {', BUY_CSS + '.onreq {', 1)
+    return new, rows
+
+def build():
+    new, rows = render()
     (ROOT / 'site.html').write_text(new, encoding='utf8')
     return rows
 

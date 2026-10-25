@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex">
 <style>
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 body { margin: 0; font-size: 14px; font-family: system-ui, sans-serif; }
@@ -143,8 +142,9 @@ figcaption span { color: var(--dim); font-size: 0.85rem; }
 code { font: 400 0.88em var(--font-data); background: var(--deep); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
 
 /* pricing */
-.price { margin-top: 32px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-@media (max-width: 820px) { .price { grid-template-columns: minmax(0, 1fr); } }
+.price { margin-top: 32px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .price { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .price { grid-template-columns: minmax(0, 1fr); } }
 .tier { background: var(--deep); border: 1px solid var(--rule); border-radius: 8px; padding: 22px; display: grid; gap: 10px; align-content: start; }
 .tier.pilot { border-color: var(--ha); }
 .tier .amt { font: 400 2rem/1 var(--font-display); }
@@ -419,7 +419,7 @@ html { scroll-behavior: smooth; }
       </label>
       <p class="sendmsg" id="picked">No folder chosen yet.</p>
       <p class="sendmsg">Keep this page open and the computer awake until it says Done. If it stops (the laptop slept, the connection dropped), come back any time within a week, fill in the same name and target, pick the same folder and press Send: it carries on where it stopped.</p>
-      <p class="sendmsg">By sending, you confirm the frames are yours to share, and agree to the <a href="#privacy">privacy note</a>.</p>
+      <p class="sendmsg">By sending, you confirm the frames are yours to share, and agree to the <a href="privacy.html">privacy policy</a> and <a href="terms.html">terms</a>.</p>
       <button type="submit" id="go" disabled>Send</button>
       <div class="bar" hidden><i></i></div>
       <p class="sendmsg" id="status" aria-live="polite"></p>
@@ -566,25 +566,32 @@ html { scroll-behavior: smooth; }
 <section id="prices">
   <div class="wrap">
     <p class="eyebrow">Prices</p>
-    <h2>Starting with a <em>pilot</em></h2>
+    <h2>One price per <em>target</em></h2>
     <div class="price">
-      <div class="tier pilot">
-        <p class="eyebrow">Now</p>
-        <div class="amt">Free <small>pilot</small></div>
-        <ul><li>A handful of datasets from friends, the local society and the Draco group</li><li>In return: feedback, and permission to show the result here</li></ul>
+      <div class="tier">
+        <p class="eyebrow">Smart telescope</p>
+        <div class="amt">£30</div>
+        <ul><li>Seestar, Dwarf, Vespera and similar</li><li>One target, one night or several</li></ul>
       </div>
       <div class="tier">
-        <p class="eyebrow">Planned</p>
-        <div class="amt">£— <small>single target</small></div>
-        <ul><li>One night or several of the same object</li><li>TIFF and JPEG, one round of tweaks</li></ul>
+        <p class="eyebrow">Dedicated rig</p>
+        <div class="amt">£45</div>
+        <ul><li>Your telescope and astro camera, colour or mono</li><li>Broadband colour or LRGB</li></ul>
       </div>
       <div class="tier">
-        <p class="eyebrow">Planned</p>
-        <div class="amt">£— <small>narrowband or mosaic</small></div>
-        <ul><li>Dual-band or SHO colour palettes</li><li>Multi-panel mosaics joined and balanced</li></ul>
+        <p class="eyebrow">Narrowband</p>
+        <div class="amt">£55</div>
+        <ul><li>Hα, OIII, SII filters, mono or dual-band</li><li>Choice of palettes</li></ul>
+      </div>
+      <div class="tier">
+        <p class="eyebrow">Mosaic</p>
+        <div class="amt">from £75</div>
+        <ul><li>Several panels joined and balanced</li><li>Quoted once I've seen the data</li></ul>
       </div>
     </div>
-    <p class="note">Prices will be set once the pilot shows how long typical datasets take.</p>
+    <p class="note"><b>Every job includes:</b> a check of every frame, a night report on your data and kit, a review page with several versions to choose from, your chosen version as a full-size 16-bit TIFF and a JPEG, the linear master files for your own processing, and one round of tweaks.</p>
+    <p class="note"><b>Extra versions:</b> £5 each (another palette, starless, a different crop).</p>
+    <p class="note"><b>Paying:</b> nothing up front. You pick from your versions on the review page, then the delivery email brings the download link with a secure Stripe payment link for the agreed price (card, Apple Pay or Google Pay). See the <a href="terms.html">terms</a> for refunds and redos.</p>
   </div>
 </section>
 
@@ -595,7 +602,7 @@ html { scroll-behavior: smooth; }
     <div class="faq">
       <details><summary>Who owns the finished image?</summary><p>You do. It's your data and your picture. I'll only show it here if you say yes.</p></details>
       <details><summary>Do you use AI tools?</summary><p>Yes, and openly. Noise reduction, star removal and sharpening use specialist astronomy tools that run on trained models, alongside conventional PixInsight processing. These tools can occasionally make up detail, so every result is checked at full size against the plain stack, and anything that isn't in your frames comes out.</p></details>
-      <details><summary>Which telescopes work?</summary><p>Any setup that saves its individual frames as FITS files. Smart telescopes so far: the ZWO Seestar S30 and S50, DWARFLAB's Dwarf range including the new Draco, and the Vaonis Vespera (its files need a small correction before stacking, which I handle). Dedicated rigs work too: any telescope with a colour or mono astro camera, from ASIAIR, NINA or similar. With a mono camera, send each filter's frames (Hα, OIII, SII, or L, R, G, B) and I'll combine them into colour. If yours is something else, send a few frames and I'll check them first.</p></details>
+      <details><summary>Which telescopes work?</summary><p>Any setup that saves its individual frames as FITS files. Smart telescopes so far: the ZWO Seestar S30 and S50, DWARFLAB's Dwarf range including the new Draco, and the Vaonis Vespera (its files need a small correction before stacking, which I handle). Dedicated rigs work too: any telescope with a colour or mono astro camera, with the frames captured by ASIAIR, NINA or any other capture software. With a mono camera, send each filter's frames (Hα, OIII, SII, or L, R, G, B) and I'll combine them into colour. If yours is something else, send a few frames and I'll check them first.</p></details>
       <details><summary>Do I need calibration frames?</summary><p>Smart telescopes handle this themselves, so just send the lights. With your own camera, flats matter most: they remove dust shadows and the darkening towards the corners. Darks and bias help too. Send whatever you have, and say if they came from a different night.</p></details>
       <details><summary>How much data should I send?</summary><p>An hour is enough for bright targets. Faint nebulae and galaxies really reward three hours or more, and several nights of the same target can be combined.</p></details>
       <details><summary>What happens to my files afterwards?</summary><p>You get a private download link for the finished picture. Seven days after you first download it, the link closes and your raw frames are deleted; if the link isn't opened, everything is cleared after 30 days. If you'd like your frames kept for adding more nights later, just say. I keep a copy of the finished picture and your name and email so I can send it again, and nothing is shared with anyone else.</p></details>
@@ -608,7 +615,7 @@ html { scroll-behavior: smooth; }
     <p>Gosforth Skies · processing from Gosforth, Newcastle upon Tyne, under 55° N skies.</p>
     <p>Email: <span id="contact">skies at gosforthskies dot co dot uk</span></p>
     <p>More of my pictures on <a href="https://www.flickr.com/photos/gosforthskies/" rel="noopener">Flickr</a>.</p>
-    <p id="privacy"><b>Privacy.</b> If you send frames or a request, I keep your name and email to reply and deliver, and your frames only until 7 days after you download the result (30 days at most). Nothing is shared or sold, and your picture only appears here if you say yes. Ask me any time to see or delete what I hold. No cookies or tracking on this site.</p>
+    <p id="privacy"><b>Privacy.</b> I keep only what I need to process and deliver your pictures, frames are deleted soon after delivery, and nothing is shared or sold. No cookies or tracking. Details in the <a href="privacy.html">privacy policy</a> and <a href="terms.html">terms</a>.</p>
   </footer>
 </div>
 

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /orion.html
+
+Sitemap: https://gosforthskies.co.uk/sitemap.xml
