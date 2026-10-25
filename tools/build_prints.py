@@ -47,9 +47,12 @@ PAY_FAQ = ('      <details id="paying"><summary>How do I pay?</summary><p>Nothin
            'Prints are paid at checkout from the Prints section. Pilot datasets stay free.</p></details>\n')
 
 def load_links(preview=False):
-    """{'Title|A3': url} from the live links file, or the test one for a preview build; {} means no buttons"""
-    f = ROOT / 'data' / ('stripe_links_test.json' if preview else 'stripe_links_live.json')
-    if not f.exists(): return {}
+    """{'Title|A3': url} from the live links file; a preview build also uses the pending live links (made but not yet
+    approved for the site) or, failing that, the test ones; {} means no buttons"""
+    d = ROOT / 'data'
+    names = ['stripe_links_live.json'] + (['stripe_links_live_pending.json', 'stripe_links_test.json'] if preview else [])
+    f = next((d / n for n in names if (d / n).exists()), None)
+    if not f: return {}
     return {k: v['url'] for k, v in json.loads(f.read_text(encoding='utf8'))['links'].items()}
 
 def card(r, links=None):
@@ -145,7 +148,6 @@ def render(preview=False):
     new = re.sub(r'\n *<details id="paying">.*?</details>', '', new, flags=re.S)       # rebuilt fresh below
     new = new.replace(BUY_CSS, '')
     if links:
-        new = new.replace('<div class="faq">\n', '<div class="faq">\n' + PAY_FAQ, 1)
         new = new.replace('.onreq {', BUY_CSS + '.onreq {', 1)
     return new, rows
 
