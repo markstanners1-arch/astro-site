@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; font-size: 14px; font-family: system-ui, sans-serif; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<title>Terms · Gosforth Skies</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Terms for the Gosforth Skies image processing service and print sales.">
+<link rel="stylesheet" href="fonts/fonts.css"><!-- self-hosted (tools/fetch_fonts.py): no visitor data goes to Google -->
+<style>
+/* Layout: one long night-sky scroll; each picture is a before/after slider, captions read like an observing log. */
+:root {
+  --sky:      #0b1019;   /* page ground: dark sky at the zenith */
+  --deep:     #121a27;   /* raised panels */
+  --rule:     #243046;
+  --ink:      #e6e9ef;   /* main text */
+  --dim:      #95a0b4;   /* secondary text */
+  --ha:       #e0664d;   /* hydrogen-alpha, 656.3 nm: the accent */
+  --oiii:     #5fb7b0;   /* oxygen-III, 500.7 nm: used sparingly */
+  --font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-body:    "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data:    "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --sky: #f3f4f7; --deep: #ffffff; --rule: #d6dbe5; --ink: #141a26; --dim: #556178; --ha: #b8432c; --oiii: #2f7f79; color-scheme: light; } }
+:root[data-theme="light"] {
+  --sky: #f3f4f7; --deep: #ffffff; --rule: #d6dbe5; --ink: #141a26; --dim: #556178; --ha: #b8432c; --oiii: #2f7f79; color-scheme: light; }
+
+body { background: var(--sky); color: var(--ink); font: 400 1rem/1.65 var(--font-body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+section { padding-block: clamp(48px, 8vw, 96px); border-top: 1px solid var(--rule); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; line-height: 1.12; margin: 0; }
+h1 { font-size: clamp(2.3rem, 5.5vw, 4rem); letter-spacing: -0.01em; }
+h1 em, h2 em { font-style: italic; color: var(--ha); }
+h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); }
+h3 { font-size: 1.45rem; }
+p { margin: 0; max-width: 65ch; }
+.eyebrow { font: 500 0.75rem/1 var(--font-data); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ha); }
+.lede { font-size: 1.15rem; color: var(--dim); }
+a { color: var(--ink); text-decoration-color: var(--ha); text-underline-offset: 3px; }
+a:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid var(--oiii); outline-offset: 3px; }
+
+/* header */
+.top { padding-block: 20px; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.brand { font: 500 1.25rem/1 var(--font-display); letter-spacing: 0.01em; }
+.brand span { color: var(--ha); }
+.nav { display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { color: var(--dim); text-decoration: none; }
+.nav a:hover { color: var(--ink); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(24px, 4vw, 56px); align-items: center; padding-block: clamp(24px, 5vw, 64px) clamp(48px, 7vw, 88px); }
+.hero > div:first-child { display: grid; gap: 20px; min-width: 0; }
+.cta { display: inline-block; justify-self: start; padding: 12px 22px; border-radius: 999px; background: var(--ha); color: #fff; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+@media (max-width: 820px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+
+/* before / after slider */
+.ba { position: relative; overflow: hidden; border-radius: 6px; background: #000; max-width: 100%; touch-action: pan-y; user-select: none; }
+.ba img { display: block; width: 100%; height: auto; }
+.ba .after { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--pos, 50%)); }
+.ba .after img { width: 100%; height: 100%; object-fit: cover; }
+.ba .handle { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 2px; margin-left: -1px; background: rgba(255,255,255,0.85); pointer-events: none; }
+.ba .handle::after { content: "\2194"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%; background: rgba(11,16,25,0.75); border: 1px solid rgba(255,255,255,0.7); color: #fff; display: grid; place-items: center; font-size: 1.1rem; }
+.ba input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+.ba .tag { position: absolute; top: 10px; padding: 3px 9px; border-radius: 4px; background: rgba(11,16,25,0.72); color: #e6e9ef; font: 500 0.7rem/1.4 var(--font-data); letter-spacing: 0.08em; text-transform: uppercase; pointer-events: none; }
+.ba .tag.l { left: 10px; } .ba .tag.r { right: 10px; }
+
+/* gallery */
+.pairs { display: grid; gap: clamp(48px, 7vw, 80px); margin-top: 40px; }
+.pair { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+.pair.flip { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); }
+.pair.flip .ba, .pair.flip figure { order: 2; }
+.pair .text { display: grid; gap: 14px; min-width: 0; }
+@media (max-width: 820px) { .pair, .pair.flip { grid-template-columns: minmax(0, 1fr); } .pair.flip .ba, .pair.flip figure { order: 0; } }
+.log { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 4px 0 0; font: 400 0.82rem/1.5 var(--font-data); color: var(--dim); font-variant-numeric: tabular-nums; }
+.log dt { color: var(--ink); opacity: 0.8; }
+.log dd { margin: 0; }
+.credit { font: 400 0.78rem/1.4 var(--font-data); color: var(--oiii); }
+.more { margin-top: clamp(36px, 5vw, 56px); font-weight: 600; }
+.more a::after { content: " \2192"; color: var(--ha); }
+/* customer work page (customers.html, built by tools/build_clients.py) */
+a.brand { color: var(--ink); text-decoration: none; }
+.nav a[aria-current="page"] { color: var(--ink); }
+.quote { margin: 4px 0 0; padding-left: 14px; border-left: 2px solid var(--ha); display: grid; gap: 4px; }
+.quote p { font: italic 400 1.05rem/1.5 var(--font-display); }
+.quote cite { font: 400 0.78rem/1.4 var(--font-data); color: var(--dim); font-style: normal; }
+.quote cite::before { content: "\2014\00a0"; }
+
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 36px; }
+@media (max-width: 820px) { .grid3 { grid-template-columns: minmax(0, 1fr); } }
+figure { margin: 0; display: grid; gap: 10px; min-width: 0; }
+figure img { width: 100%; height: auto; border-radius: 6px; display: block; }
+figcaption { display: grid; gap: 3px; font-size: 0.92rem; }
+figcaption b { font-weight: 600; }
+figcaption span { color: var(--dim); font-size: 0.85rem; }
+
+/* prints: cards generated from data/print_sizes.csv by tools/build_prints.py; every picture sits in the same 3:2 frame */
+.prints { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; margin-top: 24px; align-items: start; }
+@media (max-width: 900px) { .prints { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .prints { grid-template-columns: minmax(0, 1fr); } }
+.print img, .print .noimg { width: 100%; aspect-ratio: 3 / 2; object-fit: contain; background: #05080d; border-radius: 6px; }
+.print .noimg { display: grid; place-items: center; color: var(--dim); font: 400 0.8rem var(--font-data); border: 1px dashed var(--rule); background: var(--deep); }
+.sizes { font: 500 0.78rem/1.4 var(--font-data) !important; letter-spacing: 0.06em; color: var(--ha) !important; }
+.onreq { font: 400 0.75rem/1.4 var(--font-data) !important; color: var(--dim) !important; }
+/* colour-version buttons under a print that comes in two palettes */
+.vers { display: flex; gap: 6px; flex-wrap: wrap; margin-top: -2px; }
+.vers button { font: 500 0.72rem/1 var(--font-data); letter-spacing: 0.04em; padding: 7px 11px; border-radius: 999px; border: 1px solid var(--rule); background: var(--deep); color: var(--dim); cursor: pointer; }
+.vers button[aria-pressed="true"] { border-color: var(--ha); color: var(--ink); }
+.vers button:hover { color: var(--ink); }
+.media { margin-top: 36px; display: grid; gap: 8px; max-width: 760px; }
+.media .note { margin-top: 0; }
+
+/* how it works: a real sequence */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 36px; counter-reset: step; }
+@media (max-width: 820px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+.step { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.step::before { counter-increment: step; content: counter(step); font: 400 2.6rem/1 var(--font-display); color: var(--ha); }
+.step p { color: var(--dim); }
+/* send your frames: the upload box (talks to the gosforth-upload Worker at upload.gosforthskies.co.uk) */
+.send { margin-top: 40px; background: var(--deep); border: 1px solid var(--ha); border-radius: 8px; padding: clamp(18px, 3vw, 28px); display: grid; gap: 16px; max-width: 760px; }
+.send .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+@media (max-width: 560px) { .send .fields { grid-template-columns: minmax(0, 1fr); } }
+.send label { display: grid; gap: 4px; font-size: 0.85rem; color: var(--dim); min-width: 0; }
+.send input[type=text], .send input[type=email] { font: inherit; color: var(--ink); background: var(--sky); border: 1px solid var(--rule); border-radius: 6px; padding: 9px 11px; min-width: 0; }
+.drop { border: 1px dashed var(--rule); border-radius: 8px; padding: 22px 16px; text-align: center; color: var(--dim); cursor: pointer; display: grid; gap: 6px; }
+.drop.over { border-color: var(--oiii); color: var(--ink); }
+.drop b { color: var(--ink); font-weight: 600; }
+.send button { justify-self: start; padding: 12px 22px; border: 0; border-radius: 999px; background: var(--ha); color: #fff; font: 600 0.95rem var(--font-body); cursor: pointer; }
+.send button:disabled { opacity: 0.5; cursor: default; }
+.bar { height: 8px; border-radius: 4px; background: var(--sky); border: 1px solid var(--rule); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--oiii); transition: width 0.3s; }
+.sendmsg { font: 400 0.85rem/1.5 var(--font-data); color: var(--dim); }
+.sendmsg.err { color: var(--ha); }
+.send .trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }   /* honeypot: people never see it */
+code { font: 400 0.88em var(--font-data); background: var(--deep); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+
+/* pricing */
+.price { margin-top: 32px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 820px) { .price { grid-template-columns: minmax(0, 1fr); } }
+.tier { background: var(--deep); border: 1px solid var(--rule); border-radius: 8px; padding: 22px; display: grid; gap: 10px; align-content: start; }
+.tier.pilot { border-color: var(--ha); }
+.tier .amt { font: 400 2rem/1 var(--font-display); }
+.tier .amt small { font: 400 0.85rem var(--font-body); color: var(--dim); }
+.tier ul { margin: 0; padding-left: 18px; color: var(--dim); font-size: 0.92rem; display: grid; gap: 4px; }
+.note { margin-top: 18px; font-size: 0.88rem; color: var(--dim); }
+
+/* faq */
+.faq { margin-top: 28px; display: grid; gap: 0; max-width: 780px; }
+.faq details { border-bottom: 1px solid var(--rule); padding-block: 16px; }
+.faq summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::after { content: "+"; color: var(--ha); font-size: 1.2rem; line-height: 1; }
+.faq details[open] summary::after { content: "\2212"; }
+.faq details p { margin-top: 10px; color: var(--dim); }
+
+footer { border-top: 1px solid var(--rule); padding-block: 32px 48px; color: var(--dim); font-size: 0.85rem; display: grid; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html { scroll-behavior: smooth; }
+/* legal pages */
+.legal h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); margin-top: clamp(32px, 5vw, 48px); }
+.legal h3 { font-size: 1.15rem; margin-top: 24px; }
+.legal p, .legal .log, .legal ul.plain { max-width: 760px; margin-top: 12px; }
+.legal .log { font-size: 0.86rem; }
+ul.plain { margin: 12px 0 0; padding-left: 20px; display: grid; gap: 8px; max-width: 760px; color: var(--ink); }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="index.html">Gosforth <span>Skies</span></a>
+    <nav class="nav" aria-label="Sections">
+      <a href="index.html#gallery">Gallery</a><a href="customers.html">Customer work</a><a href="index.html#prints">Prints</a><a href="index.html#how">How it works</a><a href="index.html#prices">Prices</a><a href="index.html#faq">Questions</a>
+    </nav>
+  </header>
+</div>
+
+<section style="border-top:0; padding-top:clamp(24px, 5vw, 56px)">
+  <div class="wrap legal">
+    <p class="eyebrow">Terms · last updated 25 October 2026</p>
+    <h1>Fair <em>terms</em></h1>
+    <p class="lede">The plain-language terms for using Gosforth Skies: the image processing service, and buying prints. Gosforth Skies is run by Mark Stanners, a sole trader in Newcastle upon Tyne ("I" below). Contact: <a href="mailto:skies@gosforthskies.co.uk">skies@gosforthskies.co.uk</a>.</p>
+    <nav class="nav" aria-label="On this page" style="margin-top:18px"><a href="#service">Processing service</a><a href="#prints">Prints</a><a href="#general">General</a></nav>
+
+    <h2 id="service">1. The processing service</h2>
+    <h3>What you send</h3>
+    <ul class="plain">
+      <li>You send the raw frames from your own telescope or camera through the upload box, using an invite or project code.</li>
+      <li>By sending them you confirm they're yours, or that you have permission to share them, and that you're happy for me to process them.</li>
+      <li>Please keep your own copy. Uploads can fail and files are deleted on a timetable (see the <a href="privacy.html">privacy policy</a>), so this service isn't a backup.</li>
+    </ul>
+    <h3>What you get</h3>
+    <ul class="plain">
+      <li>I screen your frames, stack and process them, and put the versions on a private review page. You pick the ones you want, and can leave notes.</li>
+      <li>You then get a download link for your chosen versions at full size (usually a 16-bit TIFF for printing and a JPEG for sharing), with a short note on what the data showed.</li>
+      <li>The result can only be as good as the data allows: cloud, focus, tracking and total time all set the limits. If your frames can't make a picture worth having, I'll tell you and you won't be charged.</li>
+      <li>I aim to turn jobs round within a week, but I can't promise a date: it depends on the queue and the size of the data. I'll tell you if it's going to take longer.</li>
+    </ul>
+    <h3>Price and payment</h3>
+    <ul class="plain">
+      <li>Prices are on the home page and are agreed before I start. If a job turns out to need more (for example a mosaic), I'll ask before going further.</li>
+      <li>You see the result before you pay: the payment link comes with your download link, and is due within 14 days.</li>
+      <li>Extra versions (another palette, a starless version, a different crop) are charged as listed.</li>
+      <li>I'm not VAT registered, so no VAT is added.</li>
+    </ul>
+    <h3>Changes and refunds</h3>
+    <ul class="plain">
+      <li>If you're not happy with the result, tell me and I'll have another go at no extra cost.</li>
+      <li>Because the work starts when you ask for it and you see it before paying, the 14-day cancellation period for online services ends once the finished files have been delivered, as UK law allows when you ask for the work to start straight away. If something has gone wrong, talk to me: I'd rather put it right.</li>
+    </ul>
+    <h3>Who owns the pictures</h3>
+    <ul class="plain">
+      <li>Your frames and your finished pictures are yours. You can print, share, post and sell them as you like.</li>
+      <li>A credit such as "Processing: Gosforth Skies" is welcome but not required.</li>
+      <li>I'll only show your picture on this site or social media if you say yes, credited as you choose. You can ask me to take it down at any time.</li>
+    </ul>
+
+    <h2 id="prints">2. Prints</h2>
+    <ul class="plain">
+      <li>Prints are of my own pictures, made to order by a professional print lab as giclée prints on archival fine-art paper.</li>
+      <li>Prices include UK postage. Larger prints come rolled in a tube. Most orders arrive within about a week.</li>
+      <li>Screens differ, so the colours of a print may look slightly different from what you see on your device.</li>
+      <li><b>Damaged or faulty:</b> if your print arrives damaged or isn't right, email me within 14 days with a photo and I'll send a replacement or a full refund. You don't need to send it back.</li>
+      <li><b>Change of mind:</b> you can cancel within 14 days of receiving a standard print. Tell me, then return it undamaged within 14 more days, and I'll refund the price, including the original postage, within 14 days of getting it back. You pay the return postage.</li>
+      <li><b>Personalised prints</b> (with a legend, your own crop or anything else made specially for you) can't be returned for a change of mind, but the damaged or faulty promise above still applies.</li>
+      <li>Buying a print gives you the print itself. The picture's copyright stays with me (and any data provider credited with it), so please don't copy or resell it.</li>
+    </ul>
+
+    <h2 id="general">3. General</h2>
+    <ul class="plain">
+      <li>Nothing in these terms takes away your legal rights as a consumer.</li>
+      <li>I take care with your files, but if something goes wrong my liability is limited to what you paid me for the job or print concerned, except where the law doesn't allow that limit.</li>
+      <li>I can decline or stop a job, for example if the frames aren't yours to share or the content isn't appropriate. You won't be charged for work I don't deliver.</li>
+      <li>I may update these terms. The version on this page when you place an order or upload frames is the one that applies to it.</li>
+      <li>These terms are governed by the law of England and Wales.</li>
+      <li>Questions or complaints: email <a href="mailto:skies@gosforthskies.co.uk">skies@gosforthskies.co.uk</a> and I'll reply as soon as I can, usually within a couple of days.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer>
+    <p>Gosforth Skies · processing from Gosforth, Newcastle upon Tyne, under 55° N skies.</p>
+    <p>Email: <span id="contact">skies at gosforthskies dot co dot uk</span></p>
+    <p>More of my pictures on <a href="https://www.flickr.com/photos/gosforthskies/" rel="noopener">Flickr</a>.</p>
+    <p id="privacy"><b>Privacy.</b> If you send frames or a request, I keep your name and email to reply and deliver, and your frames only until 7 days after you download the result (30 days at most). Nothing is shared or sold, and your picture only appears here if you say yes. Ask me any time to see or delete what I hold. No cookies or tracking on this site.</p>
+    <p><a href="privacy.html">Privacy policy</a> · <a href="terms.html">Terms</a></p>
+  </footer>
+</div>
+
+</body>
+</html>
