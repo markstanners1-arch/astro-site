@@ -273,8 +273,9 @@ export default {
       if (p === '/admin/codes' && req.method === 'GET') return json(req, await codes(env));
       if (p === '/admin/codes' && req.method === 'PUT') {
         const c = await req.json().catch(() => null);
-        if (!c || typeof c !== 'object' || Array.isArray(c)) return json(req, { error: 'expected {"code": "who"}' }, 400);
-        const clean_ = Object.fromEntries(Object.entries(c).map(([k, v]) => [k.trim().toLowerCase(), clean(v)]));
+        if (!c || typeof c !== 'object' || Array.isArray(c)) return json(req, { error: 'expected {"code": "who" or {"who", "email"}}' }, 400);
+        const clean_ = Object.fromEntries(Object.entries(c).map(([k, v]) => [k.trim().toLowerCase(),
+          v && typeof v === 'object' ? { who: clean(v.who), email: clean(v.email, 120).toLowerCase() } : clean(v)]));
         await env.BUCKET.put('_config/codes.json', JSON.stringify(clean_), { httpMetadata: { contentType: 'application/json' } });
         return json(req, clean_);
       }
@@ -339,14 +340,18 @@ export default {
       return json(req, { ok: true });
     }
 
-    const invite = (req.headers.get('X-Invite') || '').trim().toLowerCase(), who = (await codes(env))[invite];
-    if (!invite || !who) return json(req, { error: 'That invite code is not right.' }, 403);
+    // a code is either "who it's for" or {who, email}: a personal code only opens uploads for that person's email
+    // (Mark, 26 Oct: orion42 = Gordon, acomb55 = Alistair). Any mismatch just says "Incorrect code!" (no hints).
+    const invite = (req.headers.get('X-Invite') || '').trim().toLowerCase(), entry = (await codes(env))[invite];
+    const who = typeof entry === 'string' ? entry : entry?.who, lockEmail = typeof entry === 'object' ? (entry.email || '').toLowerCase() : '';
+    if (!invite || !who) return json(req, { error: 'Incorrect code!' }, 403);
 
     if (p === '/start' && req.method === 'POST') {
       const b = await req.json().catch(() => null);
       if (!b || !Array.isArray(b.files) || !b.files.length) return json(req, { error: 'No frames chosen.' }, 400);
       const m = { name: clean(b.name), email: clean(b.email, 120), target: clean(b.target), scope: clean(b.scope), location: clean(b.location) };
       if (!m.name || !m.email || !m.target) return json(req, { error: 'Please fill in your name, email and target.' }, 400);
+      if (lockEmail && m.email.toLowerCase() !== lockEmail) return json(req, { error: 'Incorrect code!' }, 403);
       const want = b.files.reduce((t, f) => t + (Number(f.size) || 0), 0);
       if (b.files.some((f) => Number(f.size) > MAX_BIG)) return json(req, { error: 'One of the files is over 2 GB. Email me and we will sort another way.' }, 400);
       const used = (await listAll(env.BUCKET, '')).reduce((t, o) => t + o.size, 0);
