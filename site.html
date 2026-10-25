@@ -393,8 +393,9 @@ html { scroll-behavior: smooth; }
 
     <form class="send" id="send" novalidate>
       <h3 id="upload">Send your frames</h3>
+      <p class="sendmsg">The project code is just to show you're not a bot: type <b>clearskies</b>. Codes from the pilot still work.</p>
       <div class="fields">
-        <label>Invite code<input type="text" name="code" autocomplete="off" required></label>
+        <label>Project code: type <b>clearskies</b><input type="text" name="code" autocomplete="off" placeholder="clearskies" required></label>
         <label>Your name<input type="text" name="name" autocomplete="name" required></label>
         <label>Email<input type="email" name="email" autocomplete="email" required></label>
         <label>Target<input type="text" name="target" placeholder="e.g. M31, Andromeda" required></label>
@@ -470,7 +471,7 @@ html { scroll-behavior: smooth; }
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(form));
-    if (!d.code || !d.name || !d.email || !d.target) return say('Please fill in the invite code, your name, email and target.', true);
+    if (!d.code || !d.name || !d.email || !d.target) return say('Please fill in the project code (clearskies), your name, email and target.', true);
     const H = { 'X-Invite': d.code.trim() };
     go.disabled = true; bar.hidden = false; fill.style.width = '0';
     // while sending: ask the browser to keep the screen (and so the computer) awake, and warn before the page is closed
