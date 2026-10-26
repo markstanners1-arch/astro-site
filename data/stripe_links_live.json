@@ -17,7 +17,8 @@
   "Heart and Soul, wide field (IC 1805 and IC 1848)": "prod_VVYpMm8hHqXQT7",
   "Heart and Soul, Telescope Live": "prod_VVYpuT9ZLTJe1b",
   "Soul Nebula, IC 1848": "prod_VVYpcrlRMQrNBw",
-  "Andromeda, deep (Seestar + Telescope Live)": "prod_VVYpqs0YojItAk"
+  "Andromeda, deep (Seestar + Telescope Live)": "prod_VVYpqs0YojItAk",
+  "Horsehead and Flame, full field": "prod_VVd6Oqm7J5IBYu"
  },
  "links": {
   "Heart and Soul|A4": {
@@ -269,6 +270,26 @@
    "id": "plink_1UUXi1BMwvikI8auZlv4iLop",
    "url": "https://buy.stripe.com/bJeeVcanQ9Ml1GUbuC0Fi0N",
    "pence": 9000
+  },
+  "Horsehead and Flame, full field|A4": {
+   "id": "plink_1UUbqjBMwvikI8aulEiZTOYy",
+   "url": "https://buy.stripe.com/7sY28qbrU0bL3P242a0Fi0O",
+   "pence": 2500
+  },
+  "Horsehead and Flame, full field|A3": {
+   "id": "plink_1UUbqkBMwvikI8auifzoIOer",
+   "url": "https://buy.stripe.com/9B6aEWdA28Ih99m9mu0Fi0P",
+   "pence": 4500
+  },
+  "Horsehead and Flame, full field|A2": {
+   "id": "plink_1UUbqlBMwvikI8auYC1jmjXD",
+   "url": "https://buy.stripe.com/dRm8wO0Ng9Ml5XagOW0Fi0Q",
+   "pence": 8000
+  },
+  "Horsehead and Flame, full field|A1": {
+   "id": "plink_1UUbqmBMwvikI8auaVk9kJir",
+   "url": "https://buy.stripe.com/14AbJ053w5w5clycyG0Fi0R",
+   "pence": 15000
   }
  },
  "postage": "included"
