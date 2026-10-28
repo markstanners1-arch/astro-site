@@ -28,10 +28,7 @@
   --font-data:    "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
   color-scheme: dark;
 }
-@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
-  --sky: #f3f4f7; --deep: #ffffff; --rule: #d6dbe5; --ink: #141a26; --dim: #556178; --ha: #b8432c; --oiii: #2f7f79; color-scheme: light; } }
-:root[data-theme="light"] {
-  --sky: #f3f4f7; --deep: #ffffff; --rule: #d6dbe5; --ink: #141a26; --dim: #556178; --ha: #b8432c; --oiii: #2f7f79; color-scheme: light; }
+/* Always dark: a night-sky site, whatever the visitor's system theme. */
 
 body { background: var(--sky); color: var(--ink); font: 400 1rem/1.65 var(--font-body); }
 .wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
