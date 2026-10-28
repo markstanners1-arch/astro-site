@@ -30,7 +30,8 @@ import { EmailMessage } from 'cloudflare:email';
 const QUOTA = 50e9;                          // raised from 20 GB on 24 Oct 2026 (three overnight sets filled it). R2 bills average storage (10 GB-months free); sets are collected within hours, so spikes cost ~nothing. Worst case full all month: about 50p
 const MAX_FILE = 95e6;                       // a Worker request body can be up to 100 MB on the free plan: bigger files use /mpu
 const MAX_BIG = 2e9;                         // largest single frame accepted in parts (61 MP cameras are about 120 MB)
-const OK_EXT = /\.(fit|fits|fts|xisf)$/i;
+const OK_EXT = /\.(fit|fits|fts|xisf|cr2|cr3|nef|arw|txt)$/i;   // FITS, DSLR / mirrorless raws (28 Oct, Orion spec), and a session's notes.txt
+const MAX_TXT = 1e6;                         // a notes file is a few lines: cap .txt so it can't carry anything big
 // the site moved to gosforthskies.co.uk on 23 Oct 2026; the old address stays allowed while it redirects
 const SITES = ['https://gosforthskies.co.uk', 'https://www.gosforthskies.co.uk', 'https://astro.oneoffx.uk', 'https://together.oneoffx.co.uk'];  // the community project site 'One sky, together' (25 Oct)
 
@@ -382,14 +383,14 @@ export default {
     if (p === '/put' && req.method === 'PUT') {
       const name = safeName(q.get('name'));
       const size = Number(req.headers.get('Content-Length') || 0);
-      if (!OK_EXT.test(name)) return json(req, { error: `${name} is not a FITS frame.` }, 400);
-      if (!size || size > MAX_FILE) return json(req, { error: `${name} is too big.` }, 400);
+      if (!OK_EXT.test(name)) return json(req, { error: `${name} is not a FITS or camera raw frame.` }, 400);
+      if (!size || size > (/\.txt$/i.test(name) ? MAX_TXT : MAX_FILE)) return json(req, { error: `${name} is too big.` }, 400);
       await env.BUCKET.put(`${set}/${name}`, req.body);
       return json(req, { ok: true });
     }
     if (p.startsWith('/mpu/')) {
       const name = safeName(q.get('name'));
-      if (!OK_EXT.test(name)) return json(req, { error: `${name} is not a FITS frame.` }, 400);
+      if (!OK_EXT.test(name) || /\.txt$/i.test(name)) return json(req, { error: `${name} is not a FITS or camera raw frame.` }, 400);
       const key = `${set}/${name}`;
       if (p === '/mpu/start' && req.method === 'POST') return json(req, { uploadId: (await env.BUCKET.createMultipartUpload(key)).uploadId });
       const mpu = env.BUCKET.resumeMultipartUpload(key, q.get('uploadId') || '');
