@@ -78,11 +78,13 @@ def card(r, links=None):
     pic = (f'<img src="img/{e(img)}" alt="{e(r["title"])}" loading="lazy">' if img
            else '<div class="noimg">Image to follow</div>')
     alt = (r.get('alt_image') or '').strip()
-    if img and alt:   # a second colour version: buttons under the picture swap it (script at the end of site.html)
+    legend = (r.get('legend_image') or '').strip()   # framed-with-legend version (D:\Brampton_Oct7-8_work\Legends\make_legends.py)
+    if img and (alt or legend):   # buttons under the picture swap it (script at the end of site.html)
         a, b = ((r.get('alt_labels') or '').strip() or 'Red & teal|Gold & blue').split('|')
-        pic += ('\n        <div class="vers" role="group" aria-label="Colour version">'
-                f'<button type="button" aria-pressed="true" data-src="img/{e(img)}">{e(a)}</button>'
-                f'<button type="button" aria-pressed="false" data-src="img/{e(alt)}">{e(b)}</button></div>')
+        versions = [(img, a if alt else 'Plain')] + ([(alt, b)] if alt else []) + ([(legend, 'With legend')] if legend else [])
+        pic += ('\n        <div class="vers" role="group" aria-label="Version">'
+                + ''.join(f'<button type="button" aria-pressed="{"true" if k == 0 else "false"}" data-src="img/{e(src)}">{e(lab)}</button>'
+                          for k, (src, lab) in enumerate(versions)) + '</div>')
     sizes = []
     if offered: sizes.append('<span class="sizes">' + (' ' if links else ' · ').join(offered) + '</span>')
     if on_request: sizes.append('<span class="onreq">' + ' · '.join(on_request) + ' on request</span>')
@@ -108,8 +110,9 @@ def section(rows, links=None):
             '    <div class="prints">\n' + '\n'.join(card(r, links) for r in rows) + '\n    </div>\n'
             + ('    <p class="note">Prices include UK postage.</p>\n' if links else
                '    <p class="note">P&amp;P: £6 for A4 and A3 (sent flat), £9 for A2 and A1 (rolled in a tube).</p>\n') +
-            '    <p class="note">Free on request: a small legend in the corner with the object\'s name and a line about it, and a '
-            'signature. Nice for a gift; say if you\'d like your own wording or a name added.</p>\n'
+            '    <p class="note">Free on request: the legend version, with a dark border, a fine gold line and a panel giving the '
+            'object\'s name and a few lines about it (tap <b>With legend</b> under a picture to see it), and a signature. '
+            'Nice for a gift or a classroom wall; say if you\'d like your own wording or a name added.</p>\n'
             + media_block(rows) + '\n'
             + (PAY_PRINTS if links else
                '    <p class="note">To order, email me with the picture, size and finish, and whether you\'d like the legend.</p>\n')
