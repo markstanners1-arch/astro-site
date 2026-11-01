@@ -17,7 +17,7 @@
     "Heart and Soul, deep field with Sh2-200": "prod_VVYpMm8hHqXQT7",
     "Heart and Soul, close crop (Telescope Live)": "prod_VVYpuT9ZLTJe1b",
     "Soul Nebula, IC 1848": "prod_VVYpcrlRMQrNBw",
-    "Andromeda, deep (Seestar + Telescope Live)": "prod_VVYpqs0YojItAk",
+    "Andromeda, deep (Telescope Live)": "prod_VVYpqs0YojItAk",
     "Horsehead and Flame, full field": "prod_VVd6Oqm7J5IBYu"
   },
   "links": {
@@ -256,17 +256,17 @@
       "url": "https://buy.stripe.com/aFa28q0Ng9Ml1GUbuC0Fi0K",
       "pence": 4500
     },
-    "Andromeda, deep (Seestar + Telescope Live)|A4": {
+    "Andromeda, deep (Telescope Live)|A4": {
       "id": "plink_1UUXhzBMwvikI8auhHu8SphC",
       "url": "https://buy.stripe.com/6oU8wOfIa6A9etG6ai0Fi0L",
       "pence": 3000
     },
-    "Andromeda, deep (Seestar + Telescope Live)|A3": {
+    "Andromeda, deep (Telescope Live)|A3": {
       "id": "plink_1UUXi0BMwvikI8auygN5trPX",
       "url": "https://buy.stripe.com/4gMcN47bE9Ml99m2Y60Fi0M",
       "pence": 5000
     },
-    "Andromeda, deep (Seestar + Telescope Live)|A2": {
+    "Andromeda, deep (Telescope Live)|A2": {
       "id": "plink_1UUXi1BMwvikI8auZlv4iLop",
       "url": "https://buy.stripe.com/bJeeVcanQ9Ml1GUbuC0Fi0N",
       "pence": 9000

@@ -1,3 +1,4 @@
+# SUPERSEDED 1 Nov 2026: img/m31_tl_seestar.jpg is now the Telescope Live filter-by-filter Andromeda (TL_M31_lrgb\m31_merge2.py). Don't rerun this.
 # One-off (1 Nov 2026): remove the grey crescent reflection ghost from Andromeda deep (Seestar + Telescope Live) by
 # trimming the top 532 px (the ghost reaches about y = 480 in the full-size file; the corner haze goes with it).
 # Writes the cropped 16-bit TIFF beside the original, rebuilds img/m31_tl_seestar.jpg and updates print_sizes.csv.
