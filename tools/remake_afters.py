@@ -10,8 +10,12 @@ def save(img, name, rot=False):
     im = Image.fromarray(np.ascontiguousarray(img)); h = round(im.height * W / im.width)
     im.resize((W, h), Image.LANCZOS).save(OUT + name, quality=86, optimize=True, progressive=True); print('  saved', name, (W, h))
 B = 'D:/Brampton_Oct7-8_work/'
-aft = load(B + 'M31_hybrid/M31_hybrid_Ha.jpg'); y0, y1, x0, x1 = 300, 3500, 150, 2030
-save(aft[y0:y1, x0:x1], 'm31_after.jpg', rot=True)
+# M31: since 1 Nov 2026 the Affinity masked-NoiseX version (sky-only NoiseX, Mark's pick), which is the landscape frame.
+# The portrait crop rows 300:3500, cols 150:2030 turned 90 degrees clockwise is landscape rows 150:2030, cols 339:3539.
+import tifffile
+m = tifffile.imread(B + 'M31_hybrid/M31_masked_noisex.tiff'); m = m[..., :3]
+m = (m / 257 + 0.5).astype(np.uint8) if m.dtype == np.uint16 else m
+save(m[150:2030, 339:3539], 'm31_after.jpg')
 aft = load(B + 'M45_hybrid_prism/processing/M45_hybrid_prism.jpg'); y0, y1, x0, x1 = 1000, 3200, 150, 1950
 save(aft[y0:y1, x0:x1], 'm45_after.jpg')
 aft = load(B + 'M33_hybrid/processing/M33_hybrid.jpg'); y0, y1, x0, x1 = 1076, 2676, 455, 1655
