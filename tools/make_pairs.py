@@ -34,14 +34,14 @@ def quick_stretch(a):                                       # what a plain scree
 # around the galaxy, landscape. 23 Oct: the before was the app's one-night stack, an unfair comparison. The stack lives
 # on the exFAT archive drive (E: when plugged in, see D:\NINA\DRIVES.md).
 print('M31'); aft = load('D:/Brampton_Oct7-8_work/M31_hybrid/M31_hybrid_Ha.jpg')
-bef = quick_stretch(rd_xisf('E:/Astro archive/M31_seestar_all/processing/02_colour_calibrated_linear.xisf'))
+bef = quick_stretch(rd_xisf('D:/Brampton_Oct7-8_work/M31_seestar_all/processing/02_colour_calibrated_linear.xisf'))   # copied back from E:\Mirror\E_Astro archive, 1 Nov 2026
 assert bef.shape == aft.shape, (bef.shape, aft.shape)
 y0, y1, x0, x1 = 300, 3500, 150, 2030
 save(bef[y0:y1, x0:x1], 'm31_before.jpg', rot=True); save(aft[y0:y1, x0:x1], 'm31_after.jpg', rot=True)
 
 # Pleiades: plain stretch of the 58-minute two-night stack -> hybrid of the same stack (23 Oct: the before was the
 # app's one-night stack, which made the comparison unfair; now both sides are the same data)
-print('M45'); aft = load('D:/Brampton_Oct7-8_work/M45_hybrid/processing/M45_hybrid.jpg')
+print('M45'); aft = load('D:/Brampton_Oct7-8_work/M45_hybrid_prism/processing/M45_hybrid_prism.jpg')   # 1 Nov 2026: Prism second denoise + sky neutralisation
 bef = quick_stretch(rd_xisf('D:/Brampton_Oct7-8_work/M45_combined/processing/02_colour_calibrated_linear.xisf'))
 assert bef.shape == aft.shape, (bef.shape, aft.shape)
 y0, y1, x0, x1 = 1000, 3200, 150, 1950
