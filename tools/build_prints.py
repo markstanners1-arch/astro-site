@@ -110,9 +110,10 @@ def section(rows, links=None):
             '    <div class="prints">\n' + '\n'.join(card(r, links) for r in rows) + '\n    </div>\n'
             + ('    <p class="note">Prices include UK postage.</p>\n' if links else
                '    <p class="note">P&amp;P: £6 for A4 and A3 (sent flat), £9 for A2 and A1 (rolled in a tube).</p>\n') +
-            '    <p class="note">Free on request: the legend version, with a dark border, a fine gold line and a panel giving the '
-            'object\'s name and a few lines about it (tap <b>With legend</b> under a picture to see it), and a signature. '
-            'Nice for a gift or a classroom wall; say if you\'d like your own wording or a name added.</p>\n'
+            '    <p class="note">With any print you buy, at no extra charge if you ask: the legend version (a dark border, a fine '
+            'gold line and a panel giving the object\'s name and a few lines about it; tap <b>With legend</b> under a picture to '
+            'see it) and a signature. Say if you\'d like your own wording or a name added. For a fully labelled classroom '
+            'poster, see <i>Andromeda &ndash; An Educator&rsquo;s Guide to the Galaxy</i>.</p>\n'
             + media_block(rows) + '\n'
             + (PAY_PRINTS if links else
                '    <p class="note">To order, email me with the picture, size and finish, and whether you\'d like the legend.</p>\n')
