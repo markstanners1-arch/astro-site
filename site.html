@@ -1,4 +1,4 @@
-<title>Gosforth Skies</title>
+<title>Gosforth Skies: astrophotography processing for Seestar and smart telescopes</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Astrophotography processing for smart telescopes and dedicated astro cameras: send your raw frames, get back a finished image.">
 <!-- link previews (Facebook, WhatsApp, etc.) -->
@@ -46,7 +46,7 @@ a:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid 
 
 /* header */
 .top { padding-block: 20px; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
-.brand { font: 500 1.25rem/1 var(--font-display); letter-spacing: 0.01em; }
+.brand { font: 400 1.25rem/1 var(--font-display); letter-spacing: 0.01em; }
 .brand span { color: var(--ha); }
 .nav { display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
 .nav a { color: var(--dim); text-decoration: none; }
@@ -56,7 +56,21 @@ a:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid 
 .hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(24px, 4vw, 56px); align-items: center; padding-block: clamp(24px, 5vw, 64px) clamp(48px, 7vw, 88px); }
 .hero > div:first-child { display: grid; gap: 20px; min-width: 0; }
 .cta { display: inline-block; justify-self: start; padding: 12px 22px; border-radius: 999px; background: var(--ha); color: #fff; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
-@media (max-width: 820px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+.hero-actions .alt { color: var(--dim); font-size: 0.95rem; }
+.hero-actions .alt:hover { color: var(--ink); }
+.hero-meta { font: 400 0.8rem/1.6 var(--font-data); color: var(--dim); letter-spacing: 0.02em; max-width: none; }
+.hero-quote { margin: 0; }
+.nav .send-link { color: var(--ha); }
+@media (max-width: 820px) {
+  .hero { grid-template-columns: minmax(0, 1fr); padding-block: 12px 40px; gap: 22px; }
+  .hero > div:first-child { gap: 14px; }
+  .quote.hero-quote { display: none; }           /* keeps the before/after slider near the first screen on a phone */
+  .top { flex-wrap: nowrap; flex-direction: column; align-items: stretch; gap: 4px; padding-block: 14px 4px; }
+  .nav { flex-wrap: nowrap; overflow-x: auto; gap: 0 18px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }   /* one swipeable row */
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a { flex: none; padding-block: 12px; }    /* comfortable tap targets */
+}
 
 /* before / after slider */
 .ba { position: relative; overflow: hidden; border-radius: 6px; background: #000; max-width: 100%; touch-action: pan-y; user-select: none; }
@@ -170,7 +184,7 @@ html { scroll-behavior: smooth; }
   <header class="top">
     <div class="brand">Gosforth <span>Skies</span></div>
     <nav class="nav" aria-label="Sections">
-      <a href="#gallery">Gallery</a><a href="customers.html">Customer work</a><a href="#prints">Prints</a><a href="#how">How it works</a><a href="#prices">Prices</a><a href="#faq">Questions</a>
+      <a href="#gallery">Gallery</a><a href="#how">How it works</a><a href="#prices">Prices</a><a href="#prints">Prints</a><a href="customers.html">Customer work</a><a href="#faq">Questions</a><a href="#contact">Contact</a><a class="send-link" href="#send">Send frames</a>
     </nav>
   </header>
 
@@ -178,8 +192,10 @@ html { scroll-behavior: smooth; }
     <div>
       <p class="eyebrow">Image processing for smart telescopes and astro cameras</p>
       <h1>You've already caught the light. <em>Let's develop it.</em></h1>
-      <p class="lede">Send me the raw frames from your Seestar, Dwarf, Vespera, or your own telescope and astro camera, colour or mono with filters. I screen out the cloudy ones, stack the rest properly and process them into a finished picture you'll want on the wall.</p>
-      <a class="cta" href="#how">See how it works</a>
+      <p class="lede">Send me the raw frames from your Seestar, Dwarf, Vespera or your own rig. I screen out the cloudy ones, stack the rest and finish a picture you'll want on the wall.</p>
+      <div class="hero-actions"><a class="cta" href="#how">See how it works</a><a class="alt" href="#send">or send your frames</a></div>
+      <p class="hero-meta">From £30 a target · nothing to pay until you've chosen your version<br>Processed by Mark Stanners in Gosforth, Newcastle upon Tyne</p>
+      <blockquote class="quote hero-quote"><p>You're pulling some wonderful detail out of these data sets!</p><cite>Alistair Bartlett, client</cite></blockquote>
     </div>
     <div class="ba" style="--pos:50%">
       <img src="img/m31_before.jpg" alt="The Andromeda Galaxy as a plain stretch of the stacked Seestar frames: a soft grey oval" width="1600" height="940">
@@ -267,118 +283,6 @@ html { scroll-behavior: smooth; }
       </figure>
     </div>
     <p class="note">Telescope Live images are processed from my own subscription. Their licence doesn't allow subscribers to pass data on, so I can't process TL data for others.</p>
-  </div>
-</section>
-
-<section id="prints">
-  <div class="wrap">
-    <p class="eyebrow">Prints</p>
-    <h2>Pictures for the <em>wall</em></h2>
-    <p class="lede" style="margin-top:14px">Prints from my own Seestar and Vespera data, captured across Tyneside, Northumberland and Cumbria, plus professional data from Telescope Live. Printed on fine-art paper.</p>
-    <p class="eyebrow" style="margin-top:28px">Prices · unframed fine-art giclée</p>
-    <div class="prints">
-      <figure class="print">
-        <img src="img/heart_soul_mosaic.jpg" alt="Heart and Soul, Seestar mosaic" loading="lazy">
-        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/heart_soul_mosaic.jpg">Plain</button><button type="button" aria-pressed="false" data-src="img/heart_soul_mosaic_legend.jpg">With legend</button></div>
-        <figcaption><b>Heart and Soul, Seestar mosaic</b><span>9.5 h</span><span class="credit">Captured and processed by Mark Stanners, Seestar</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/4gM5kC53w0bL0CQ56e0Fi00" rel="noopener">A4 £30</a> <a class="buy" href="https://buy.stripe.com/cNi4gygMe6A985i42a0Fi01" rel="noopener">A3 £50</a> <a class="buy" href="https://buy.stripe.com/9B6fZg7bE2jTadqdCK0Fi02" rel="noopener">A2 £90</a></span><span class="onreq">A1 on request</span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/m31_after.jpg" alt="Andromeda, M31" loading="lazy">
-        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/m31_after.jpg">Plain</button><button type="button" aria-pressed="false" data-src="img/m31_after_legend.jpg">With legend</button></div>
-        <figcaption><b>Andromeda, M31</b><span>8.6 hours of light, four nights, nearly 100 miles of driving to dark skies.</span><span class="credit">Captured and processed by Mark Stanners, Seestar</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/14A28qanQaQpbhugOW0Fi03" rel="noopener">A4 £30</a> <a class="buy" href="https://buy.stripe.com/28E7sK2VogaJetGaqy0Fi04" rel="noopener">A3 £50</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/m45_after.jpg" alt="The Pleiades, M45" loading="lazy">
-        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/m45_after.jpg">Plain</button><button type="button" aria-pressed="false" data-src="img/m45_after_legend.jpg">With legend</button></div>
-        <figcaption><b>The Pleiades, M45</b><span>58 min · 2 nights</span><span class="credit">Captured and processed by Mark Stanners, Seestar</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/cNi28qfIaf6F85ieGO0Fi05" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/eVqeVcbrUcYxetGgOW0Fi06" rel="noopener">A3 £45</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/elephants_trunk.jpg" alt="Elephant&#x27;s Trunk, IC 1396" loading="lazy">
-        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/elephants_trunk.jpg">Plain</button><button type="button" aria-pressed="false" data-src="img/elephants_trunk_legend.jpg">With legend</button></div>
-        <figcaption><b>Elephant&#x27;s Trunk, IC 1396</b><span>3 h · 1 night</span><span class="credit">Captured and processed by Mark Stanners, Vespera</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/bJe6oG3ZscYx0CQ42a0Fi09" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/6oU7sK3ZscYxbhu8iq0Fi0a" rel="noopener">A3 £45</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/garlic_nebula.jpg" alt="Garlic Nebula" loading="lazy">
-        <figcaption><b>Garlic Nebula</b><span>57 h 20 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/bJe28qeE6gaJ3P2buC0Fi0b" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/6oUfZgbrU5w5etG0PY0Fi0c" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/eVq00i2Vo2jT1GU7em0Fi0d" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/fZubJ0cvY1fPcly42a0Fi0e" rel="noopener">A1 £150</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/horsehead_b33.jpg" alt="Horsehead, B33" loading="lazy">
-        <figcaption><b>Horsehead, B33</b><span>The classic view: the Horsehead on its glowing ridge with the Flame Nebula to the left</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/3cI00i7bE8Ih99mdCK0Fi0h" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/3cI9ASdA27Ed5Xa7em0Fi0i" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/8x2bJ053w9MlgBOgOW0Fi0j" rel="noopener">A2 £80</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/horsehead_b33_full.jpg" alt="Horsehead and Flame, full field" loading="lazy">
-        <figcaption><b>Horsehead and Flame, full field</b><span>The whole region round the Horsehead: the Flame, the long glowing curtain of IC 434 and the dark clouds of Orion</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/7sY28qbrU0bL3P242a0Fi0O" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/9B6aEWdA28Ih99m9mu0Fi0P" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/dRm8wO0Ng9Ml5XagOW0Fi0Q" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/14AbJ053w5w5clycyG0Fi0R" rel="noopener">A1 £150</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/tl_ngc6188.jpg" alt="Fighting Dragons of Ara, NGC 6188" loading="lazy">
-        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ngc6188.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ngc6188_gold.jpg">Gold &amp; blue</button><button type="button" aria-pressed="false" data-src="img/tl_ngc6188_legend.jpg">With legend</button></div>
-        <figcaption><b>Fighting Dragons of Ara, NGC 6188</b><span>7 h 40 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/cNi14m3ZsaQpcly6ai0Fi0l" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/00wfZgcvYgaJ5Xa2Y60Fi0m" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/aFa28q53w1fPbhufKS0Fi0n" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/cNi7sK0Ng3nX2KYfKS0Fi0o" rel="noopener">A1 £150</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/tl_ic2944.jpg" alt="Running Chicken, IC 2944" loading="lazy">
-        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ic2944.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic2944_gold.jpg">Gold &amp; blue</button></div>
-        <figcaption><b>Running Chicken, IC 2944</b><span>6 h 30 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/14AbJ03ZsgaJ3P29mu0Fi0p" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/8x26oGdA26A985ieGO0Fi0q" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/9B67sK3Zs3nX2KY6ai0Fi0r" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/9B65kC2Vo7Ed3P20PY0Fi0s" rel="noopener">A1 £150</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/tl_m27.jpg" alt="Dumbbell Nebula, M27" loading="lazy">
-        <figcaption><b>Dumbbell Nebula, M27</b><span>14 h 15 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/fZu28qgMe3nXdpC8iq0Fi0t" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/fZueVcdA29Ml85idCK0Fi0u" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/7sY8wOdA2e2BgBOeGO0Fi0v" rel="noopener">A2 £80</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/tl_m7.jpg" alt="Butterfly Cluster, M7" loading="lazy">
-        <figcaption><b>Butterfly Cluster, M7</b><span>12 h</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/3cI00i7bEf6FbhucyG0Fi0w" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/aFa00i3Zse2B99m9mu0Fi0x" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/8x228qdA22jT71e6ai0Fi0y" rel="noopener">A2 £80</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/tl_m16.jpg" alt="Eagle Nebula, M16" loading="lazy">
-        <figcaption><b>Eagle Nebula, M16</b><span>23 h 04 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/fZufZg8fI0bLdpC56e0Fi0z" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/aFaaEW1RkaQpetG6ai0Fi0A" rel="noopener">A3 £45</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/tl_m57.jpg" alt="Ring Nebula, M57" loading="lazy">
-        <figcaption><b>Ring Nebula, M57</b><span>12 h 50 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/4gM5kC9jM9Ml99mdCK0Fi0B" rel="noopener">A4 £25</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/tl_ic1848_wide.jpg" alt="Heart and Soul, deep field with Sh2-200" loading="lazy">
-        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ic1848_wide.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic1848_wide_gold.jpg">Gold &amp; blue</button></div>
-        <figcaption><b>Heart and Soul, deep field with Sh2-200</b><span>21 h 50 min · in red and teal or gold and blue · with the rare planetary nebula Sh2-200 in the top corner</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/6oU00igMe8IhetGbuC0Fi0C" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/aFadR8anQ0bLgBOdCK0Fi0D" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/cNi5kC0Nge2B99m56e0Fi0E" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/7sY7sK53w6A9fxK42a0Fi0F" rel="noopener">A1 £150</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/tl_ic1848_heart_soul.jpg" alt="Heart and Soul, close crop (Telescope Live)" loading="lazy">
-        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ic1848_heart_soul.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic1848_heart_soul_gold.jpg">Gold &amp; blue</button></div>
-        <figcaption><b>Heart and Soul, close crop (Telescope Live)</b><span>21 h 50 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/6oUdR81Rkf6Fadq2Y60Fi0G" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/14AdR81Rkf6F1GUeGO0Fi0H" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/3cI6oG0NgbUt2KYdCK0Fi0I" rel="noopener">A2 £80</a></span><span class="onreq">A1 on request</span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/tl_ic1848_soul.jpg" alt="Soul Nebula, IC 1848" loading="lazy">
-        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ic1848_soul.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic1848_soul_gold.jpg">Gold &amp; blue</button></div>
-        <figcaption><b>Soul Nebula, IC 1848</b><span>21 h 50 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/cNi6oG1Rke2Badq6ai0Fi0J" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/aFa28q0Ng9Ml1GUbuC0Fi0K" rel="noopener">A3 £45</a></span></figcaption>
-      </figure>
-      <figure class="print">
-        <img src="img/m31_tl_seestar.jpg" alt="Andromeda, deep (Seestar + Telescope Live)" loading="lazy">
-        <figcaption><b>Andromeda, deep (Seestar + Telescope Live)</b><span class="credit">Seestar data by Mark Stanners, combined with Telescope Live data</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/6oU8wOfIa6A9etG6ai0Fi0L" rel="noopener">A4 £30</a> <a class="buy" href="https://buy.stripe.com/4gMcN47bE9Ml99m2Y60Fi0M" rel="noopener">A3 £50</a> <a class="buy" href="https://buy.stripe.com/bJeeVcanQ9Ml1GUbuC0Fi0N" rel="noopener">A2 £90</a></span></figcaption>
-      </figure>
-    </div>
-    <p class="note">Prices include UK postage.</p>
-    <p class="note">Free on request: the legend version, with a dark border, a fine gold line and a panel giving the object's name and a few lines about it (tap <b>With legend</b> under a picture to see it), and a signature. Nice for a gift or a classroom wall; say if you'd like your own wording or a name added.</p>
-    <div class="media">
-      <h3>Acrylic and metal</h3>
-      <p>Most images can also be made as a face-mounted acrylic or an aluminium-mounted print: deep blacks, ready to hang, no frame needed. Priced on request; as a guide, from about £120 at A3 and £220 at A2.</p>
-      <p class="note">At A3: Heart and Soul, Seestar mosaic; Andromeda, M31; The Pleiades, M45; Elephant&#x27;s Trunk, IC 1396; Garlic Nebula; Horsehead, B33; Horsehead and Flame, full field; Fighting Dragons of Ara, NGC 6188; Running Chicken, IC 2944; Dumbbell Nebula, M27; Butterfly Cluster, M7; Eagle Nebula, M16; Heart and Soul, deep field with Sh2-200; Heart and Soul, close crop (Telescope Live); Soul Nebula, IC 1848; Andromeda, deep (Seestar + Telescope Live).</p>
-      <p class="note">At A2: Heart and Soul, Seestar mosaic; Garlic Nebula; Horsehead, B33; Horsehead and Flame, full field; Fighting Dragons of Ara, NGC 6188; Running Chicken, IC 2944; Dumbbell Nebula, M27; Butterfly Cluster, M7; Heart and Soul, deep field with Sh2-200; Heart and Soul, close crop (Telescope Live); Andromeda, deep (Seestar + Telescope Live).</p>
-    </div>
-    <p class="note pay"><b>Buying a print.</b> Tap a size to pay securely through Stripe by card, Apple Pay or Google Pay; your card details go to Stripe, never to me. There's a box at checkout for the optional legend wording. I print each one to order and email you when it's posted. UK delivery for now; for anywhere else, a size not listed, or acrylic and metal, email me.</p>
-    <form class="send" id="ask" novalidate>
-      <h3>Not here? Ask for it</h3>
-      <p class="sendmsg">Tell me the object or picture you'd like on your wall. I may be able to shoot it or source the data.</p>
-      <div class="fields">
-        <label>Your name<input type="text" id="ask-name" name="name" autocomplete="name" required></label>
-        <label>Email<input type="email" id="ask-email" name="email" autocomplete="email" required></label>
-        <label>What you'd like<input type="text" id="ask-object" name="object" placeholder="e.g. the Orion Nebula" required></label>
-        <label>Size<input type="text" id="ask-size" name="size" placeholder="e.g. A3"></label>
-      </div>
-      <label>Anything else<input type="text" id="ask-note" name="note"></label>
-      <label class="trap" aria-hidden="true">Website<input type="text" id="ask-website" name="website" tabindex="-1" autocomplete="off"></label>
-      <p class="sendmsg">By sending, you agree to the <a href="#privacy">privacy note</a>.</p>
-      <button type="submit">Send request</button>
-      <p class="sendmsg" id="ask-status" aria-live="polite"></p>
-    </form>
   </div>
 </section>
 
@@ -612,6 +516,118 @@ html { scroll-behavior: smooth; }
       <details><summary>How much data should I send?</summary><p>An hour is enough for bright targets. Faint nebulae and galaxies really reward three hours or more, and several nights of the same target can be combined.</p></details>
       <details><summary>What happens to my files afterwards?</summary><p>You get a private download link for the finished picture. Seven days after you first download it, the link closes and your raw frames are deleted; if the link isn't opened, everything is cleared after 30 days. If you'd like your frames kept for adding more nights later, just say. I keep a copy of the finished picture and your name and email so I can send it again, and nothing is shared with anyone else.</p></details>
     </div>
+  </div>
+</section>
+
+<section id="prints">
+  <div class="wrap">
+    <p class="eyebrow">Prints</p>
+    <h2>Pictures for the <em>wall</em></h2>
+    <p class="lede" style="margin-top:14px">Prints from my own Seestar and Vespera data, captured across Tyneside, Northumberland and Cumbria, plus professional data from Telescope Live. Printed on fine-art paper.</p>
+    <p class="eyebrow" style="margin-top:28px">Prices · unframed fine-art giclée</p>
+    <div class="prints">
+      <figure class="print">
+        <img src="img/heart_soul_mosaic.jpg" alt="Heart and Soul, Seestar mosaic" loading="lazy">
+        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/heart_soul_mosaic.jpg">Plain</button><button type="button" aria-pressed="false" data-src="img/heart_soul_mosaic_legend.jpg">With legend</button></div>
+        <figcaption><b>Heart and Soul, Seestar mosaic</b><span>9.5 h</span><span class="credit">Captured and processed by Mark Stanners, Seestar</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/4gM5kC53w0bL0CQ56e0Fi00" rel="noopener">A4 £30</a> <a class="buy" href="https://buy.stripe.com/cNi4gygMe6A985i42a0Fi01" rel="noopener">A3 £50</a> <a class="buy" href="https://buy.stripe.com/9B6fZg7bE2jTadqdCK0Fi02" rel="noopener">A2 £90</a></span><span class="onreq">A1 on request</span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/m31_after.jpg" alt="Andromeda, M31" loading="lazy">
+        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/m31_after.jpg">Plain</button><button type="button" aria-pressed="false" data-src="img/m31_after_legend.jpg">With legend</button></div>
+        <figcaption><b>Andromeda, M31</b><span>8.6 hours of light, four nights, nearly 100 miles of driving to dark skies.</span><span class="credit">Captured and processed by Mark Stanners, Seestar</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/14A28qanQaQpbhugOW0Fi03" rel="noopener">A4 £30</a> <a class="buy" href="https://buy.stripe.com/28E7sK2VogaJetGaqy0Fi04" rel="noopener">A3 £50</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/m45_after.jpg" alt="The Pleiades, M45" loading="lazy">
+        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/m45_after.jpg">Plain</button><button type="button" aria-pressed="false" data-src="img/m45_after_legend.jpg">With legend</button></div>
+        <figcaption><b>The Pleiades, M45</b><span>58 min · 2 nights</span><span class="credit">Captured and processed by Mark Stanners, Seestar</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/cNi28qfIaf6F85ieGO0Fi05" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/eVqeVcbrUcYxetGgOW0Fi06" rel="noopener">A3 £45</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/elephants_trunk.jpg" alt="Elephant&#x27;s Trunk, IC 1396" loading="lazy">
+        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/elephants_trunk.jpg">Plain</button><button type="button" aria-pressed="false" data-src="img/elephants_trunk_legend.jpg">With legend</button></div>
+        <figcaption><b>Elephant&#x27;s Trunk, IC 1396</b><span>3 h · 1 night</span><span class="credit">Captured and processed by Mark Stanners, Vespera</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/bJe6oG3ZscYx0CQ42a0Fi09" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/6oU7sK3ZscYxbhu8iq0Fi0a" rel="noopener">A3 £45</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/garlic_nebula.jpg" alt="Garlic Nebula" loading="lazy">
+        <figcaption><b>Garlic Nebula</b><span>57 h 20 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/bJe28qeE6gaJ3P2buC0Fi0b" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/6oUfZgbrU5w5etG0PY0Fi0c" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/eVq00i2Vo2jT1GU7em0Fi0d" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/fZubJ0cvY1fPcly42a0Fi0e" rel="noopener">A1 £150</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/horsehead_b33.jpg" alt="Horsehead, B33" loading="lazy">
+        <figcaption><b>Horsehead, B33</b><span>The classic view: the Horsehead on its glowing ridge with the Flame Nebula to the left</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/3cI00i7bE8Ih99mdCK0Fi0h" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/3cI9ASdA27Ed5Xa7em0Fi0i" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/8x2bJ053w9MlgBOgOW0Fi0j" rel="noopener">A2 £80</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/horsehead_b33_full.jpg" alt="Horsehead and Flame, full field" loading="lazy">
+        <figcaption><b>Horsehead and Flame, full field</b><span>The whole region round the Horsehead: the Flame, the long glowing curtain of IC 434 and the dark clouds of Orion</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/7sY28qbrU0bL3P242a0Fi0O" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/9B6aEWdA28Ih99m9mu0Fi0P" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/dRm8wO0Ng9Ml5XagOW0Fi0Q" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/14AbJ053w5w5clycyG0Fi0R" rel="noopener">A1 £150</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_ngc6188.jpg" alt="Fighting Dragons of Ara, NGC 6188" loading="lazy">
+        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ngc6188.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ngc6188_gold.jpg">Gold &amp; blue</button><button type="button" aria-pressed="false" data-src="img/tl_ngc6188_legend.jpg">With legend</button></div>
+        <figcaption><b>Fighting Dragons of Ara, NGC 6188</b><span>7 h 40 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/cNi14m3ZsaQpcly6ai0Fi0l" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/00wfZgcvYgaJ5Xa2Y60Fi0m" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/aFa28q53w1fPbhufKS0Fi0n" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/cNi7sK0Ng3nX2KYfKS0Fi0o" rel="noopener">A1 £150</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_ic2944.jpg" alt="Running Chicken, IC 2944" loading="lazy">
+        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ic2944.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic2944_gold.jpg">Gold &amp; blue</button></div>
+        <figcaption><b>Running Chicken, IC 2944</b><span>6 h 30 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/14AbJ03ZsgaJ3P29mu0Fi0p" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/8x26oGdA26A985ieGO0Fi0q" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/9B67sK3Zs3nX2KY6ai0Fi0r" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/9B65kC2Vo7Ed3P20PY0Fi0s" rel="noopener">A1 £150</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_m27.jpg" alt="Dumbbell Nebula, M27" loading="lazy">
+        <figcaption><b>Dumbbell Nebula, M27</b><span>14 h 15 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/fZu28qgMe3nXdpC8iq0Fi0t" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/fZueVcdA29Ml85idCK0Fi0u" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/7sY8wOdA2e2BgBOeGO0Fi0v" rel="noopener">A2 £80</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_m7.jpg" alt="Butterfly Cluster, M7" loading="lazy">
+        <figcaption><b>Butterfly Cluster, M7</b><span>12 h</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/3cI00i7bEf6FbhucyG0Fi0w" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/aFa00i3Zse2B99m9mu0Fi0x" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/8x228qdA22jT71e6ai0Fi0y" rel="noopener">A2 £80</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_m16.jpg" alt="Eagle Nebula, M16" loading="lazy">
+        <figcaption><b>Eagle Nebula, M16</b><span>23 h 04 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/fZufZg8fI0bLdpC56e0Fi0z" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/aFaaEW1RkaQpetG6ai0Fi0A" rel="noopener">A3 £45</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_m57.jpg" alt="Ring Nebula, M57" loading="lazy">
+        <figcaption><b>Ring Nebula, M57</b><span>12 h 50 min</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/4gM5kC9jM9Ml99mdCK0Fi0B" rel="noopener">A4 £25</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_ic1848_wide.jpg" alt="Heart and Soul, deep field with Sh2-200" loading="lazy">
+        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ic1848_wide.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic1848_wide_gold.jpg">Gold &amp; blue</button></div>
+        <figcaption><b>Heart and Soul, deep field with Sh2-200</b><span>21 h 50 min · in red and teal or gold and blue · with the rare planetary nebula Sh2-200 in the top corner</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/6oU00igMe8IhetGbuC0Fi0C" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/aFadR8anQ0bLgBOdCK0Fi0D" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/cNi5kC0Nge2B99m56e0Fi0E" rel="noopener">A2 £80</a> <a class="buy" href="https://buy.stripe.com/7sY7sK53w6A9fxK42a0Fi0F" rel="noopener">A1 £150</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_ic1848_heart_soul.jpg" alt="Heart and Soul, close crop (Telescope Live)" loading="lazy">
+        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ic1848_heart_soul.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic1848_heart_soul_gold.jpg">Gold &amp; blue</button></div>
+        <figcaption><b>Heart and Soul, close crop (Telescope Live)</b><span>21 h 50 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/6oUdR81Rkf6Fadq2Y60Fi0G" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/14AdR81Rkf6F1GUeGO0Fi0H" rel="noopener">A3 £45</a> <a class="buy" href="https://buy.stripe.com/3cI6oG0NgbUt2KYdCK0Fi0I" rel="noopener">A2 £80</a></span><span class="onreq">A1 on request</span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/tl_ic1848_soul.jpg" alt="Soul Nebula, IC 1848" loading="lazy">
+        <div class="vers" role="group" aria-label="Version"><button type="button" aria-pressed="true" data-src="img/tl_ic1848_soul.jpg">Red &amp; teal</button><button type="button" aria-pressed="false" data-src="img/tl_ic1848_soul_gold.jpg">Gold &amp; blue</button></div>
+        <figcaption><b>Soul Nebula, IC 1848</b><span>21 h 50 min · in red and teal or gold and blue</span><span class="credit">Processed by Mark Stanners, original data from Telescope Live</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/cNi6oG1Rke2Badq6ai0Fi0J" rel="noopener">A4 £25</a> <a class="buy" href="https://buy.stripe.com/aFa28q0Ng9Ml1GUbuC0Fi0K" rel="noopener">A3 £45</a></span></figcaption>
+      </figure>
+      <figure class="print">
+        <img src="img/m31_tl_seestar.jpg" alt="Andromeda, deep (Seestar + Telescope Live)" loading="lazy">
+        <figcaption><b>Andromeda, deep (Seestar + Telescope Live)</b><span class="credit">Seestar data by Mark Stanners, combined with Telescope Live data</span><span class="sizes"><a class="buy" href="https://buy.stripe.com/6oU8wOfIa6A9etG6ai0Fi0L" rel="noopener">A4 £30</a> <a class="buy" href="https://buy.stripe.com/4gMcN47bE9Ml99m2Y60Fi0M" rel="noopener">A3 £50</a> <a class="buy" href="https://buy.stripe.com/bJeeVcanQ9Ml1GUbuC0Fi0N" rel="noopener">A2 £90</a></span></figcaption>
+      </figure>
+    </div>
+    <p class="note">Prices include UK postage.</p>
+    <p class="note">Free on request: the legend version, with a dark border, a fine gold line and a panel giving the object's name and a few lines about it (tap <b>With legend</b> under a picture to see it), and a signature. Nice for a gift or a classroom wall; say if you'd like your own wording or a name added.</p>
+    <div class="media">
+      <h3>Acrylic and metal</h3>
+      <p>Most images can also be made as a face-mounted acrylic or an aluminium-mounted print: deep blacks, ready to hang, no frame needed. Priced on request; as a guide, from about £120 at A3 and £220 at A2.</p>
+      <p class="note">At A3: Heart and Soul, Seestar mosaic; Andromeda, M31; The Pleiades, M45; Elephant&#x27;s Trunk, IC 1396; Garlic Nebula; Horsehead, B33; Horsehead and Flame, full field; Fighting Dragons of Ara, NGC 6188; Running Chicken, IC 2944; Dumbbell Nebula, M27; Butterfly Cluster, M7; Eagle Nebula, M16; Heart and Soul, deep field with Sh2-200; Heart and Soul, close crop (Telescope Live); Soul Nebula, IC 1848; Andromeda, deep (Seestar + Telescope Live).</p>
+      <p class="note">At A2: Heart and Soul, Seestar mosaic; Garlic Nebula; Horsehead, B33; Horsehead and Flame, full field; Fighting Dragons of Ara, NGC 6188; Running Chicken, IC 2944; Dumbbell Nebula, M27; Butterfly Cluster, M7; Heart and Soul, deep field with Sh2-200; Heart and Soul, close crop (Telescope Live); Andromeda, deep (Seestar + Telescope Live).</p>
+    </div>
+    <p class="note pay"><b>Buying a print.</b> Tap a size to pay securely through Stripe by card, Apple Pay or Google Pay; your card details go to Stripe, never to me. There's a box at checkout for the optional legend wording. I print each one to order and email you when it's posted. UK delivery for now; for anywhere else, a size not listed, or acrylic and metal, email me.</p>
+    <form class="send" id="ask" novalidate>
+      <h3>Not here? Ask for it</h3>
+      <p class="sendmsg">Tell me the object or picture you'd like on your wall. I may be able to shoot it or source the data.</p>
+      <div class="fields">
+        <label>Your name<input type="text" id="ask-name" name="name" autocomplete="name" required></label>
+        <label>Email<input type="email" id="ask-email" name="email" autocomplete="email" required></label>
+        <label>What you'd like<input type="text" id="ask-object" name="object" placeholder="e.g. the Orion Nebula" required></label>
+        <label>Size<input type="text" id="ask-size" name="size" placeholder="e.g. A3"></label>
+      </div>
+      <label>Anything else<input type="text" id="ask-note" name="note"></label>
+      <label class="trap" aria-hidden="true">Website<input type="text" id="ask-website" name="website" tabindex="-1" autocomplete="off"></label>
+      <p class="sendmsg">By sending, you agree to the <a href="#privacy">privacy note</a>.</p>
+      <button type="submit">Send request</button>
+      <p class="sendmsg" id="ask-status" aria-live="polite"></p>
+    </form>
   </div>
 </section>
 
