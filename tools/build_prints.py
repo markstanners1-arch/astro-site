@@ -88,6 +88,9 @@ def card(r, links=None):
     sizes = []
     if offered: sizes.append('<span class="sizes">' + (' ' if links else ' · ').join(offered) + '</span>')
     if on_request: sizes.append('<span class="onreq">' + ' · '.join(on_request) + ' on request</span>')
+    url, lt = (r.get('link_url') or '').strip(), (r.get('link_text') or '').strip()   # optional "read more" link (2 Nov 2026)
+    if url.startswith('https://') and lt:
+        lines.append(f'<a href="{e(url)}" rel="noopener" target="_blank">{e(lt)}</a>')
     return ('      <figure class="print">\n        ' + pic + '\n        <figcaption><b>' + e(r['title']) + '</b>'
             + ''.join(f'<span>{l}</span>' for l in lines)
             + f'<span class="credit">{e(credit(r["source"]))}</span>' + ''.join(sizes) + '</figcaption>\n      </figure>')
