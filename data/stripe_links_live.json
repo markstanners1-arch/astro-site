@@ -19,7 +19,8 @@
   "Soul Nebula, IC 1848": "prod_VVYpcrlRMQrNBw",
   "Andromeda, deep (Telescope Live)": "prod_VVYpqs0YojItAk",
   "Horsehead and Flame, full field": "prod_VVd6Oqm7J5IBYu",
-  "Andromeda \u2013 An Educator\u2019s Guide to the Galaxy": "prod_VYEdkeceBEXf2T"
+  "Andromeda \u2013 An Educator\u2019s Guide to the Galaxy": "prod_VYEdkeceBEXf2T",
+  "Heart and Soul \u2013 An Educator\u2019s Guide to the Nebulae": "prod_VYFfs7Mfe23hSv"
  },
  "links": {
   "Heart and Soul, Seestar mosaic|A4": {
@@ -300,6 +301,16 @@
   "Andromeda \u2013 An Educator\u2019s Guide to the Galaxy|A3": {
    "id": "plink_1UX8AZBMwvikI8auhXZu3f52",
    "url": "https://buy.stripe.com/eVq9ASfIa8Ih85idCK0Fi0T",
+   "pence": 4500
+  },
+  "Heart and Soul \u2013 An Educator\u2019s Guide to the Nebulae|A4": {
+   "id": "plink_1UX99hBMwvikI8aufjTiIQlM",
+   "url": "https://buy.stripe.com/dRm00i3Zs9MlclydCK0Fi0U",
+   "pence": 2500
+  },
+  "Heart and Soul \u2013 An Educator\u2019s Guide to the Nebulae|A3": {
+   "id": "plink_1UX99hBMwvikI8au6yvo2UKP",
+   "url": "https://buy.stripe.com/dRmfZg7bE2jT5XaeGO0Fi0V",
    "pence": 4500
   }
  },
