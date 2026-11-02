@@ -190,6 +190,15 @@ code { font: 400 0.88em var(--font-data); background: var(--deep); border: 1px s
 footer { border-top: 1px solid var(--rule); padding-block: 32px 48px; color: var(--dim); font-size: 0.85rem; display: grid; gap: 6px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 html { scroll-behavior: smooth; }
+/* click a picture to see it large (gallery and prints; the before/after sliders are left alone) */
+figure img, .print img { cursor: zoom-in; }
+.ba img { cursor: auto; }
+.lb { position: fixed; inset: 0; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px; background: #03050a; cursor: zoom-out; }
+.lb.open { display: flex; }
+.lb img { max-width: 100%; max-height: calc(100% - 48px); object-fit: contain; border-radius: 4px; }
+.lb p { margin: 0; color: var(--dim); font: 400 0.85rem var(--font-data); text-align: center; }
+.lb button { position: absolute; top: 10px; right: 12px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--ink); font-size: 1.6rem; line-height: 1; cursor: pointer; }
+.lb button:hover { background: rgba(255, 255, 255, 0.08); }
 </style>
 
 </head>
@@ -678,6 +687,27 @@ document.querySelectorAll('.print .vers').forEach(function (group) {
     });
   });
 });
+// click or tap a picture to see it large: whichever version is showing, with its title; tap anywhere, Esc or the cross closes it
+(function () {
+  var lb = document.createElement('div'); lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Picture, enlarged');
+  lb.innerHTML = '<button type="button" aria-label="Close">&times;</button><img alt=""><p></p>';
+  document.body.appendChild(lb);
+  var big = lb.querySelector('img'), cap = lb.querySelector('p'), closeBtn = lb.querySelector('button'), last = null;
+  function close() { lb.classList.remove('open'); big.removeAttribute('src'); document.body.style.overflow = ''; if (last) last.focus(); }
+  lb.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && lb.classList.contains('open')) close(); });
+  document.querySelectorAll('figure img, .print img').forEach(function (img) {
+    if (img.closest('.ba')) return;
+    img.tabIndex = 0;
+    function open() {
+      var fig = img.closest('figure'), title = fig && fig.querySelector('figcaption b');
+      big.src = img.currentSrc || img.src; big.alt = img.alt; cap.textContent = title ? title.textContent : img.alt;
+      last = img; lb.classList.add('open'); document.body.style.overflow = 'hidden'; closeBtn.focus();
+    }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+})();
 // contact address built in the browser so it never appears whole in the page source (light protection from scrapers);
 // without JavaScript the "skies at gosforthskies dot co dot uk" text stays as written
 (function () {
